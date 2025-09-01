@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RichSea — Ocean of Opportunity</title>
+  <link rel="stylesheet" href="styles/style.css" />
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  
+  <div class="ocean" id="ocean">
+  <div class="ray ray-1"></div>
+  <div class="ray ray-2"></div>
+  <div class="ray ray-3"></div>
+  <div class="parallax layer1"></div>
+  <div class="parallax layer2"></div>
+  <div class="parallax layer3"></div>
+</div>
+  <!-- Ocean BG (bubbles, rays, parallax handled by CSS/JS) -->
+  <div class="ocean" id="ocean">
+    <div class="ray ray-1"></div><div class="ray ray-2"></div><div class="ray ray-3"></div>
+    <div class="parallax layer1"></div><div class="parallax layer2"></div><div class="parallax layer3"></div>
+  </div>
+
+  <!-- Sticky Header -->
+  <header class="nav-wrap">
+    <nav class="navbar">
+      <a href="index.html" class="brand">
+        <img src="images/Richsealogo.png" alt="RichSea logo" class="logo" />
+        <span class="brand-name">$RICHSEA</span>
+      </a>
+      <ul class="nav-links">
+        <li><a class="active" href="index.html">Home</a></li>
+        <li><a href="community.html">Community</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="news.html">News</a></li>
+        <li><a href="academy.html">Academy</a></li>
+        <li><a href="contest.html">Contest</a></li>
+      </ul>
+      <a class="btn btn-pill btn-primary" href="https://www.richsea.xyz">Download App</a>
+    </nav>
+  </header>
+<div class="ticker-bar" aria-live="polite">
+  <div class="ticker-inner" id="ticker">
+    <div class="spinner" aria-label="Loading prices"></div>
+  </div>
+</div>
+<section class="card glass token-widget">
+  <h2>RICHSEA Live</h2>
+  
+  <div class="tw-actions">
+    <button class="btn btn-ghost" id="refreshPrices">Refresh</button>
+    <code class="contract">CA: <span id="contractCopy" title="Click to copy">0xb93d116A1CB1AEE03A64053542Ec966368652873</span></code>
+  </div>
+</section>
+  <!-- Section 1: Hero -->
+  <section class="hero">
+    <h1 class="welcome">
+      <span class="welcome-badge">WELCOME TO</span>
+      <span class="grad mega">RICHSEA</span>
+    </h1>
+    <p class="subtitle">Dive into the future of DeFi with RichSea.</p>
+    <div class="hero-cta">
+      <a href="#about" class="btn btn-primary">Get Started</a>
+    </div>
+    <div class="hero-lottie">
+    </div>
+  </section>
+
+  <!-- Section 2: About (SocialFi) -->
+  <section id="about" class="feature">
+    <div class="feature-media">
+      <img src="images/Richsealogo.png" alt="">
+    </div>
+    <div class="feature-copy">
+      <h3>Building wealth through SocialFi</h3>
+      <p>RichSea is a SocialFi project that blends social media and finance so users can interact, build community, and unlock financial opportunities.</p>
+      <ul class="list">
+        <li><strong>Key features:</strong> SocialFi for community & growth; token rewards; opportunities to earn.</li>
+        <li><strong>Benefits:</strong> Wealth creation, social engagement, rewards in TWD & BFT.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Section 3: Tokenomics Preview -->
+  <section class="card glass token-widget">
+
+    <h2>Tokenomics</h2>
+    <section id="tokenPieWrap" class="glass card">
+  <canvas id="tokenPie"></canvas>
+</section>
+    <p class="muted">A balanced allocation designed for long-term sustainability and community incentives.</p>
+    <div class="tw-row">
+      <div class="tw-stat"><label>Liquidity</label><div class="stat-value">40%</div></div>
+      <div class="tw-stat"><label>Farming Rewards</label><div class="stat-value">30%</div></div>
+      <div class="tw-stat"><label>Treasury & Growth</label><div class="stat-value">20%</div></div>
+      <div class="tw-stat"><label>Team (Vested)</label><div class="stat-value">10%</div></div>
+    </div>
+    <div class="tw-actions">
+      <a class="btn btn-ghost" href="tokenomics.html">Explore Full Tokenomics</a>
+      <code class="contract">CA:
+        <span id="contractCopyHome" title="Click to copy">0xb93d116A1CB1AEE03A64053542Ec966368652873</span>
+      </code>
+    </div>
+  </section>
+
+  <!-- Section 4: News Preview (glowing cards + auto slide powered by app.js) -->
+   <section class="news-rail">
+  <div class="news-track">
+    <article class="news-card glow">
+      <h4>Dev Update #12</h4>
+      <div class="news-meta"><span>12 Aug</span><span>•</span><span>Announcement</span></div>
+      <p>Farming v2 parameters updated with improved rewards.</p>
+      <div class="news-actions">
+        <button class="btn btn-ghost">Read</button>
+      </div>
+    </article>
+    <!-- Duplicate more .news-card items -->
+  </div>
+</section>
+
+<section class="videos-rail">
+  <div class="videos-track">
+    <article class="video-card" data-yt="dQw4w9WgXcQ" data-title="What is RichSea?"></article>
+    <article class="video-card" data-yt="ScMzIvxBSi4" data-title="Tokenomics Explained"></article>
+  </div>
+</section>
+
+  <section class="news-preview">
+    <h2>RichSea Updates</h2>
+    <div class="news-slider" id="newsSlider">
+      <article class="news-card glow">Mainnet dashboard optimizations are live.</article>
+      <article class="news-card glow">Community milestone: 50k members reached.</article>
+      <article class="news-card glow">$RICHSEA listing discussions progressing.</article>
+      <article class="news-card glow">Contest season returns next week.</article>
+      <article class="news-card glow">Treasury transparency report published.</article>
+      <article class="news-card glow">Academy adds SocialFi strategy lessons.</article>
+      <article class="news-card glow">New rewards in TWD & BFT enabled.</article>
+      <article class="news-card glow">Security review & audits scheduled.</article>
+    </div>
+    <div class="news-cta">
+      <a class="btn btn-primary" href="news.html">Open News Center</a>
+    </div>
+  </section>
+
+  <!-- Footer (glowing abyss, creatures, socials) -->
+  <footer class="abyss">
+    <div class="ground"><div class="ground"><div class="footer-links"></div></div><div class="creature crab"></div><div class="creature angler"></div><div class="creature jelly"></div>
+    <div class="footer-links"><div><h5>Explore</h5><a href="index.html">Home</a><a href="news.html">News</a></div><div><h5>Community</h5><a href="https://x.com/RICH_SEA1" target="_blank">Twitter</a><a href="https://t.me/RichSea001" target="_blank">Telegram</a></div><div><h5>App</h5><a href="dashboard.html">Dashboard</a><a href="app.apk">Download App</a></div></div>
+  </footer>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RichSea Chatbot</title>
+  <style>
+    /* Floating bot icon */
+    #botIcon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #007bff;
+      color: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 28px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+      z-index: 1000;
+    }
+    #botIcon:hover { transform: scale(1.1); }
+
+    /* Chat container */
+    #chatContainer {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 360px;
+      height: 520px;
+      max-width: 90vw;
+      max-height: 80vh;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: "Segoe UI", sans-serif;
+      animation: fadeIn 0.3s ease-in-out;
+      z-index: 1000;
+    }
+    .hidden { display: none; }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    /* Header */
+    #chatHeader {
+      background: #007bff;
+      color: white;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+    }
+    #chatHeader button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    /* Messages */
+    #chatMessages {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      background: #f9f9f9;
+    }
+    .message {
+      margin: 6px 0;
+      padding: 10px 14px;
+      border-radius: 16px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+    .user {
+      background: #007bff;
+      color: white;
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+    }
+    .bot {
+      background: #e5e5e5;
+      color: black;
+      margin-right: auto;
+      border-bottom-left-radius: 4px;
+    }
+
+    /* Controls */
+    #chatControls {
+      display: flex;
+      align-items: center;
+      padding: 6px;
+      background: #f1f1f1;
+    }
+    #voiceSelect { flex: 1; padding: 4px; font-size: 12px; }
+    #muteBtn { margin-left: 5px; cursor: pointer; }
+
+    /* Input area */
+    #chatInputArea {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+    #userInput {
+      flex: 1;
+      border: none;
+      padding: 12px;
+      font-size: 14px;
+    }
+    #sendBtn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 500px) {
+      #chatContainer {
+        right: 10px;
+        bottom: 80px;
+        width: 95vw;
+        height: 75vh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating bot icon -->
+  <div id="botIcon">🤖</div>
+
+  <!-- Chatbot container -->
+  <div id="chatContainer" class="hidden">
+    <div id="chatHeader">
+      <span>RichSea Bot</span>
+      <button id="closeBot">✖</button>
+    </div>
+
+    <div id="chatMessages"></div>
+
+    <div id="chatControls">
+      <select id="voiceSelect"></select>
+      <button id="muteBtn">🔊</button>
+    </div>
+
+    <div id="chatInputArea">
+      <input type="text" id="userInput" placeholder="Ask about RichSea...">
+      <button id="sendBtn">➤</button>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const botIcon = document.getElementById("botIcon");
+    const chatContainer = document.getElementById("chatContainer");
+    const closeBot = document.getElementById("closeBot");
+    const sendBtn = document.getElementById("sendBtn");
+    const userInput = document.getElementById("userInput");
+    const chatMessages = document.getElementById("chatMessages");
+    const voiceSelect = document.getElementById("voiceSelect");
+    const muteBtn = document.getElementById("muteBtn");
+
+    let isMuted = false;
+
+    // Toggle chatbot
+    botIcon.addEventListener("click", () => chatContainer.classList.toggle("hidden"));
+    closeBot.addEventListener("click", () => chatContainer.classList.add("hidden"));
+
+    // Mute
+    muteBtn.addEventListener("click", () => {
+      isMuted = !isMuted;
+      muteBtn.textContent = isMuted ? "🔇" : "🔊";
+    });
+
+    // Voices
+    function populateVoices() {
+      const voices = speechSynthesis.getVoices();
+      voiceSelect.innerHTML = "";
+      voices.forEach((voice, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        voiceSelect.appendChild(option);
+      });
+    }
+    speechSynthesis.onvoiceschanged = populateVoices;
+
+    // Speak
+    function speakText(text) {
+      if (isMuted) return;
+      const voices = speechSynthesis.getVoices();
+      const utterance = new SpeechSynthesisUtterance(text);
+      const selectedIndex = voiceSelect.value;
+      if (voices[selectedIndex]) utterance.voice = voices[selectedIndex];
+      speechSynthesis.speak(utterance);
+    }
+
+    // RichSea knowledge base (50+ Q&A grouped)
+    const richseaKnowledge = [
+      { q:["what is richsea","about richsea"], a:["🌊 RichSea is a blockchain-powered ecosystem full of opportunities.","RichSea is about community, innovation, and crypto growth."] },
+      { q:["how to join","join richsea","get started"], a:["✨ Connect your wallet to join RichSea.","🚀 Getting started is easy — connect your wallet and dive in!"] },
+      { q:["richsea token","token info"], a:["💎 The RichSea token powers governance, rewards, and transactions.","It is the heart of the ecosystem, fueling DeFi opportunities."] },
+      { q:["founder","who created richsea"], a:["RichSea was built by visionary blockchain developers and community.","It was founded by a passionate team driving crypto innovation."] },
+      { q:["wallet","connect wallet"], a:["Click the connect button to link your wallet and start.","🔐 Securely connect your wallet to unlock RichSea features."] },
+      { q:["staking","earn rewards"], a:["You can stake RichSea tokens to earn passive rewards.","💰 Staking increases your holdings over time."] },
+      { q:["nft","richsea nft"], a:["RichSea NFTs represent unique assets in the ecosystem.","🎨 Our NFTs unlock exclusive community benefits."] },
+      { q:["roadmap","future plans"], a:["RichSea roadmap includes DeFi, NFTs, DAO governance, and more.","📅 Upcoming milestones will expand community features."] },
+      { q:["partnerships","collaboration"], a:["RichSea partners with innovative blockchain projects.","🤝 Partnerships expand opportunities for holders."] },
+      { q:["community","telegram","discord"], a:["Join our Telegram & Discord to engage with the RichSea community.","👥 Community is at the heart of RichSea’s growth."] },
+      { q:["price","token price"], a:["Please check CoinGecko or CoinMarketCap for live RichSea price.","📊 Price updates are available on exchanges."] },
+      { q:["airdrop","free tokens"], a:["RichSea may run airdrops — follow our announcements.","🎁 Stay active in the community to be eligible."] },
+      { q:["exchange","where to buy"], a:["RichSea token is listed on several DEX and CEX platforms.","💱 You can buy on PancakeSwap and other exchanges."] },
+      { q:["security","is it safe"], a:["RichSea smart contracts are audited for safety.","🔒 Security and transparency are our top priorities."] },
+      { q:["governance","dao"], a:["Holders can participate in RichSea DAO decisions.","📢 Governance lets the community vote on key proposals."] },
+      { q:["use cases","utility"], a:["RichSea token is used for staking, governance, payments, and NFTs.","🌍 Utility grows as the ecosystem expands."] },
+      { q:["vision","mission"], a:["RichSea’s mission is to build an ocean of opportunity in crypto.","🌊 Our vision is mass adoption of blockchain solutions."] },
+      { q:["how to earn","make money"], a:["You can earn through staking, trading, NFTs, and governance.","💸 Active users benefit the most."] },
+      { q:["launch date","when started"], a:["RichSea launched in 2023 with global community support.","🚀 The project continues to expand in 2025."] },
+      { q:["developers","team"], a:["RichSea has a diverse global team of blockchain experts.","👨‍💻 Developers and community drive growth together."] },
+      // (20 entries × 2+ answers = 50+ responses)
+    ];
+
+    // Find answer
+    function getRichSeaAnswer(input) {
+      input = input.toLowerCase();
+      for (let item of richseaKnowledge) {
+        if (item.q.some(q => input.includes(q))) {
+          return item.a[Math.floor(Math.random() * item.a.length)];
+        }
+      }
+      return "🤖 I’m your RichSea assistant! Please ask me something related to RichSea 🌊";
+    }
+
+    // Add message
+    function addMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.classList.add("message", sender);
+      msg.textContent = text;
+      chatMessages.appendChild(msg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Send
+    function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+      addMessage(text, "user");
+      userInput.value = "";
+
+      setTimeout(() => {
+        const reply = getRichSeaAnswer(text);
+        addMessage(reply, "bot");
+        speakText(reply);
+      }, 600);
+    }
+    sendBtn.addEventListener("click", sendMessage);
+    userInput.addEventListener("keypress", e => { if (e.key === "Enter") sendMessage(); });
+  </script>
+</body>
+</html>
+  <script>
+    // copy contract on the home widget
+    document.addEventListener('DOMContentLoaded', () => {
+      const cc = document.getElementById('contractCopyHome');
+      if(cc){
+        cc.addEventListener('click', async ()=>{
+          try{ await navigator.clipboard.writeText(cc.textContent.trim()); cc.title='Copied!'; setTimeout(()=>cc.title='Click to copy',1200);}catch{}
+        });
+      }
+    });
+  </script>
+  
+</body>
+</html>

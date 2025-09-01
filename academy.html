@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RichSea — Academy</title>
+  <link rel="stylesheet" href="styles/style.css" />
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <div class="ocean" id="ocean">
+  <div class="ray ray-1"></div>
+  <div class="ray ray-2"></div>
+  <div class="ray ray-3"></div>
+  <div class="parallax layer1"></div>
+  <div class="parallax layer2"></div>
+  <div class="parallax layer3"></div>
+</div>
+  <div class="ocean" id="ocean"><div class="ray ray-1"></div><div class="ray ray-2"></div><div class="ray ray-3"></div><div class="parallax layer1"></div><div class="parallax layer2"></div><div class="parallax layer3"></div></div>
+
+  <header class="nav-wrap">
+    <nav class="navbar">
+      <a href="index.html" class="brand"><img src="images/Richsealogo.png" class="logo" alt=""><span class="brand-name">$RICHSEA</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li><li><a href="community.html">Community</a></li><li><a href="dashboard.html">Dashboard</a></li><li><a href="news.html">News</a></li><li><a href="about.html">About</a></li><li><a href="tokenomics.html">Tokenomics</a></li><li><a class="active" href="academy.html">Academy</a></li><li><a href="contest.html">Contest</a></li>
+      </ul>
+      <a class="btn btn-pill btn-primary" href="https://www.richsea.xyz">Download App</a>
+    </nav>
+  </header>
+
+  <section class="page-hero with-avatar">
+    <div class="hero-ava">
+     
+    <div>
+      <h1 class="grad">RichSea Academy</h1>
+      <p class="muted">Clear, practical learning paths that help you understand SocialFi, navigate risk, and build durable strategies.</p>
+    </div>
+  </section>
+
+  <section class="grid-3">
+    <article class="card glass"><h3>SocialFi Basics</h3><p>Understand how social graphs meet token economies, and why incentives matter.</p></article>
+    <article class="card glass"><h3>Getting Started</h3><p>Create your profile, explore the app, and learn how to earn responsibly.</p></article>
+    <article class="card glass"><h3>Risk & Security</h3><p>Best practices for keys, wallets, and evaluating opportunities.</p></article>
+    <article class="card glass"><h3>Strategies</h3><p>Long-term participation, compounding rewards, and portfolio thinking.</p></article>
+    <article class="card glass"><h3>Community</h3><p>Participate in feedback loops, AMAs, and governance signals.</p></article>
+    <article class="card glass"><h3>Glossary</h3><p>Plain-English definitions for common crypto & SocialFi terms.</p></article>
+  </section>
+
+  <footer class="abyss">
+    <div class="ground"><div class="ground"><div class="footer-links"></div></div><div class="creature crab"></div><div class="creature angler"></div><div class="creature jelly"></div>
+    <div class="footer-links"><div><h5>Explore</h5><a href="news.html">News</a><a href="contest.html">Contest</a></div><div><h5>Community</h5><a href="https://x.com/RICH_SEA1" target="_blank">Twitter</a><a href="https://t.me/RichSea001" target="_blank">Telegram</a></div><div><h5>App</h5><a href="dashboard.html">Dashboard</a><a href="app.apk">Download App</a></div></div>
+  </footer>
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RichSea Chatbot</title>
+  <style>
+    /* Floating bot icon */
+    #botIcon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #007bff;
+      color: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 28px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+      z-index: 1000;
+    }
+    #botIcon:hover { transform: scale(1.1); }
+
+    /* Chat container */
+    #chatContainer {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 360px;
+      height: 520px;
+      max-width: 90vw;
+      max-height: 80vh;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: "Segoe UI", sans-serif;
+      animation: fadeIn 0.3s ease-in-out;
+      z-index: 1000;
+    }
+    .hidden { display: none; }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    /* Header */
+    #chatHeader {
+      background: #007bff;
+      color: white;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+    }
+    #chatHeader button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    /* Messages */
+    #chatMessages {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      background: #f9f9f9;
+    }
+    .message {
+      margin: 6px 0;
+      padding: 10px 14px;
+      border-radius: 16px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+    .user {
+      background: #007bff;
+      color: white;
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+    }
+    .bot {
+      background: #e5e5e5;
+      color: black;
+      margin-right: auto;
+      border-bottom-left-radius: 4px;
+    }
+
+    /* Controls */
+    #chatControls {
+      display: flex;
+      align-items: center;
+      padding: 6px;
+      background: #f1f1f1;
+    }
+    #voiceSelect { flex: 1; padding: 4px; font-size: 12px; }
+    #muteBtn { margin-left: 5px; cursor: pointer; }
+
+    /* Input area */
+    #chatInputArea {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+    #userInput {
+      flex: 1;
+      border: none;
+      padding: 12px;
+      font-size: 14px;
+    }
+    #sendBtn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 500px) {
+      #chatContainer {
+        right: 10px;
+        bottom: 80px;
+        width: 95vw;
+        height: 75vh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating bot icon -->
+  <div id="botIcon">🤖</div>
+
+  <!-- Chatbot container -->
+  <div id="chatContainer" class="hidden">
+    <div id="chatHeader">
+      <span>RichSea Bot</span>
+      <button id="closeBot">✖</button>
+    </div>
+
+    <div id="chatMessages"></div>
+
+    <div id="chatControls">
+      <select id="voiceSelect"></select>
+      <button id="muteBtn">🔊</button>
+    </div>
+
+    <div id="chatInputArea">
+      <input type="text" id="userInput" placeholder="Ask about RichSea...">
+      <button id="sendBtn">➤</button>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const botIcon = document.getElementById("botIcon");
+    const chatContainer = document.getElementById("chatContainer");
+    const closeBot = document.getElementById("closeBot");
+    const sendBtn = document.getElementById("sendBtn");
+    const userInput = document.getElementById("userInput");
+    const chatMessages = document.getElementById("chatMessages");
+    const voiceSelect = document.getElementById("voiceSelect");
+    const muteBtn = document.getElementById("muteBtn");
+
+    let isMuted = false;
+
+    // Toggle chatbot
+    botIcon.addEventListener("click", () => chatContainer.classList.toggle("hidden"));
+    closeBot.addEventListener("click", () => chatContainer.classList.add("hidden"));
+
+    // Mute
+    muteBtn.addEventListener("click", () => {
+      isMuted = !isMuted;
+      muteBtn.textContent = isMuted ? "🔇" : "🔊";
+    });
+
+    // Voices
+    function populateVoices() {
+      const voices = speechSynthesis.getVoices();
+      voiceSelect.innerHTML = "";
+      voices.forEach((voice, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        voiceSelect.appendChild(option);
+      });
+    }
+    speechSynthesis.onvoiceschanged = populateVoices;
+
+    // Speak
+    function speakText(text) {
+      if (isMuted) return;
+      const voices = speechSynthesis.getVoices();
+      const utterance = new SpeechSynthesisUtterance(text);
+      const selectedIndex = voiceSelect.value;
+      if (voices[selectedIndex]) utterance.voice = voices[selectedIndex];
+      speechSynthesis.speak(utterance);
+    }
+
+    // RichSea knowledge base (50+ Q&A grouped)
+    const richseaKnowledge = [
+      { q:["what is richsea","about richsea"], a:["🌊 RichSea is a blockchain-powered ecosystem full of opportunities.","RichSea is about community, innovation, and crypto growth."] },
+      { q:["how to join","join richsea","get started"], a:["✨ Connect your wallet to join RichSea.","🚀 Getting started is easy — connect your wallet and dive in!"] },
+      { q:["richsea token","token info"], a:["💎 The RichSea token powers governance, rewards, and transactions.","It is the heart of the ecosystem, fueling DeFi opportunities."] },
+      { q:["founder","who created richsea"], a:["RichSea was built by visionary blockchain developers and community.","It was founded by a passionate team driving crypto innovation."] },
+      { q:["wallet","connect wallet"], a:["Click the connect button to link your wallet and start.","🔐 Securely connect your wallet to unlock RichSea features."] },
+      { q:["staking","earn rewards"], a:["You can stake RichSea tokens to earn passive rewards.","💰 Staking increases your holdings over time."] },
+      { q:["nft","richsea nft"], a:["RichSea NFTs represent unique assets in the ecosystem.","🎨 Our NFTs unlock exclusive community benefits."] },
+      { q:["roadmap","future plans"], a:["RichSea roadmap includes DeFi, NFTs, DAO governance, and more.","📅 Upcoming milestones will expand community features."] },
+      { q:["partnerships","collaboration"], a:["RichSea partners with innovative blockchain projects.","🤝 Partnerships expand opportunities for holders."] },
+      { q:["community","telegram","discord"], a:["Join our Telegram & Discord to engage with the RichSea community.","👥 Community is at the heart of RichSea’s growth."] },
+      { q:["price","token price"], a:["Please check CoinGecko or CoinMarketCap for live RichSea price.","📊 Price updates are available on exchanges."] },
+      { q:["airdrop","free tokens"], a:["RichSea may run airdrops — follow our announcements.","🎁 Stay active in the community to be eligible."] },
+      { q:["exchange","where to buy"], a:["RichSea token is listed on several DEX and CEX platforms.","💱 You can buy on PancakeSwap and other exchanges."] },
+      { q:["security","is it safe"], a:["RichSea smart contracts are audited for safety.","🔒 Security and transparency are our top priorities."] },
+      { q:["governance","dao"], a:["Holders can participate in RichSea DAO decisions.","📢 Governance lets the community vote on key proposals."] },
+      { q:["use cases","utility"], a:["RichSea token is used for staking, governance, payments, and NFTs.","🌍 Utility grows as the ecosystem expands."] },
+      { q:["vision","mission"], a:["RichSea’s mission is to build an ocean of opportunity in crypto.","🌊 Our vision is mass adoption of blockchain solutions."] },
+      { q:["how to earn","make money"], a:["You can earn through staking, trading, NFTs, and governance.","💸 Active users benefit the most."] },
+      { q:["launch date","when started"], a:["RichSea launched in 2023 with global community support.","🚀 The project continues to expand in 2025."] },
+      { q:["developers","team"], a:["RichSea has a diverse global team of blockchain experts.","👨‍💻 Developers and community drive growth together."] },
+      // (20 entries × 2+ answers = 50+ responses)
+    ];
+
+    // Find answer
+    function getRichSeaAnswer(input) {
+      input = input.toLowerCase();
+      for (let item of richseaKnowledge) {
+        if (item.q.some(q => input.includes(q))) {
+          return item.a[Math.floor(Math.random() * item.a.length)];
+        }
+      }
+      return "🤖 I’m your RichSea assistant! Please ask me something related to RichSea 🌊";
+    }
+
+    // Add message
+    function addMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.classList.add("message", sender);
+      msg.textContent = text;
+      chatMessages.appendChild(msg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Send
+    function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+      addMessage(text, "user");
+      userInput.value = "";
+
+      setTimeout(() => {
+        const reply = getRichSeaAnswer(text);
+        addMessage(reply, "bot");
+        speakText(reply);
+      }, 600);
+    }
+    sendBtn.addEventListener("click", sendMessage);
+    userInput.addEventListener("keypress", e => { if (e.key === "Enter") sendMessage(); });
+  </script>
+</body>
+</html>
+
+</body>
+</html>
