@@ -146,7 +146,21 @@ small, .small { font-size:.9rem; color:var(--muted) }
 .btn-ghost{background:transparent}
 
 /* ===== Cards / Grid ===== */
-.card{
+.card {
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  padding: .75rem 1.05rem;
+  background: rgba(0,0,0,.25);
+
+  /* Text overflow fix */
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+
+  /* Responsive sizing */
+  max-width: 100%;
+  box-sizing: border-box;
+}
   border:1px solid var(--stroke); border-radius:16px; padding:1rem;
   background: rgba(0,0,0,.25);
 }
@@ -458,4 +472,5 @@ footer {
     right: 2.5%;
   }
 }
+
 /* ...existing code... */
