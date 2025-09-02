@@ -50,7 +50,8 @@
 <section class="card glass token-widget">
   <h2>RICHSEA Live</h2>
 
-  <style>
+
+<style>
   .dashboard {
     max-width: 900px;
     margin: 20px auto;
@@ -58,12 +59,12 @@
     background: #0e2a55;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    color: #ffffff;
   }
   .stats {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    margin-bottom: 20px;
   }
   .stat {
     flex: 1 1 45%;
@@ -82,23 +83,16 @@
     margin: 0;
     font-size: 1.2rem;
   }
-  #chart {
-    width: 100%;
-    height: 400px;
-  }
 
   @media (max-width: 600px) {
     .stat {
       flex: 1 1 100%;
     }
-    #chart {
-      height: 300px;
-    }
   }
 </style>
 
 <div class="dashboard">
-  <h2 style="text-align:center; color:#00ffcc;">Richsea Token Dashboard</h2>
+  <h2 style="text-align:center; color:#00ffcc;">Richsea Token Stats</h2>
   <div class="stats">
     <div class="stat">
       <h3>Price (USD)</h3>
@@ -121,10 +115,8 @@
       <p id="change">Loading...</p>
     </div>
   </div>
-  <canvas id="chart"></canvas>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 const tokenPair = "0x1eb5c5852a9809157dfedfda457aa251f66ab8aa";
 const chain = "bsc";
@@ -135,9 +127,6 @@ const marketCapElem = document.getElementById("marketCap");
 const liquidityElem = document.getElementById("liquidity");
 const volumeElem = document.getElementById("volume");
 const changeElem = document.getElementById("change");
-const ctx = document.getElementById("chart").getContext("2d");
-
-let chart;
 
 async function fetchData() {
   try {
@@ -147,71 +136,23 @@ async function fetchData() {
 
     const pairData = data.pair;
 
-    // Update stats
     priceElem.textContent = `$${parseFloat(pairData.priceUsd).toFixed(6)}`;
     marketCapElem.textContent = pairData.liquidity?.usd ? `$${Number(pairData.liquidity.usd).toLocaleString()}` : "N/A";
     liquidityElem.textContent = pairData.liquidity?.usd ? `$${Number(pairData.liquidity.usd).toLocaleString()}` : "N/A";
     volumeElem.textContent = pairData.volume?.usd_24h ? `$${Number(pairData.volume.usd_24h).toLocaleString()}` : "N/A";
     changeElem.textContent = pairData.priceChange?.h24 ? `${pairData.priceChange.h24.toFixed(2)}%` : "N/A";
 
-    // Prepare chart data
-    const history = pairData.priceHistory || [];
-    const labels = history.map(h => new Date(h[0]).toLocaleDateString());
-    const prices = history.map(h => parseFloat(h[1]));
-
-    if (chart) chart.destroy();
-
-    chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Price (USD)',
-          data: prices,
-          borderColor: '#00ffcc',
-          backgroundColor: 'rgba(0, 255, 204, 0.1)',
-          tension: 0.2,
-          fill: true,
-          pointRadius: 0
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            mode: 'index',
-            intersect: false,
-            callbacks: {
-              label: function(context) {
-                return `$${context.parsed.y.toFixed(6)}`;
-              }
-            }
-          }
-        },
-        scales: {
-          x: {
-            ticks: { color: '#ffffff' },
-            grid: { color: '#1b345d' }
-          },
-          y: {
-            ticks: { color: '#ffffff' },
-            grid: { color: '#1b345d' }
-          }
-        }
-      }
-    });
-
   } catch (error) {
     console.error("Error fetching DexScreener data:", error);
   }
 }
 
-// Initial fetch and update every 30s
+// Initial fetch and refresh every 30 seconds
 fetchData();
 setInterval(fetchData, 30000);
-  </script>
+</script>
+  
+
 
   <div class="tw-actions">
     <button class="btn btn-ghost" id="refreshPrices">Refresh</button>
@@ -546,6 +487,7 @@ setInterval(fetchData, 30000);
 </body>
 
 </html>
+
 
 
 
