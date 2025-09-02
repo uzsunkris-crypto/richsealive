@@ -476,31 +476,3 @@ footer {
 /* ...existing code... */
 
 
-/* ===== Fix text overflowing from card boxes ===== */
-.card, 
-.glass, 
-.token-widget, 
-.feature-copy {
-  max-width: 100%;
-  box-sizing: border-box;
-  white-space: normal;
-  word-wrap: break-word;
-  overflow-wrap: anywhere;
-}
-
-.card h2, 
-.card p, 
-.feature-copy h3, 
-.feature-copy p, 
-.feature-copy ul {
-  margin: 0.5rem 0;
-  line-height: 1.5;
-}
-
-@media (max-width: 768px) {
-  .card, .feature-copy {
-    padding: 1rem;
-    font-size: 0.95rem;
-  }
-}
-
