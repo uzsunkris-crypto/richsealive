@@ -50,6 +50,169 @@
 <section class="card glass token-widget">
   <h2>RICHSEA Live</h2>
 
+  <style>
+  .dashboard {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 15px;
+    background: #0e2a55;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .stat {
+    flex: 1 1 45%;
+    margin: 10px 0;
+    padding: 10px;
+    background: #123165;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .stat h3 {
+    margin: 5px 0;
+    font-size: 1rem;
+    color: #00ffcc;
+  }
+  .stat p {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  #chart {
+    width: 100%;
+    height: 400px;
+  }
+
+  @media (max-width: 600px) {
+    .stat {
+      flex: 1 1 100%;
+    }
+    #chart {
+      height: 300px;
+    }
+  }
+</style>
+
+<div class="dashboard">
+  <h2 style="text-align:center; color:#00ffcc;">Richsea Token Dashboard</h2>
+  <div class="stats">
+    <div class="stat">
+      <h3>Price (USD)</h3>
+      <p id="price">Loading...</p>
+    </div>
+    <div class="stat">
+      <h3>Market Cap</h3>
+      <p id="marketCap">Loading...</p>
+    </div>
+    <div class="stat">
+      <h3>Liquidity</h3>
+      <p id="liquidity">Loading...</p>
+    </div>
+    <div class="stat">
+      <h3>24h Volume</h3>
+      <p id="volume">Loading...</p>
+    </div>
+    <div class="stat">
+      <h3>24h Change</h3>
+      <p id="change">Loading...</p>
+    </div>
+  </div>
+  <canvas id="chart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const tokenPair = "0x1eb5c5852a9809157dfedfda457aa251f66ab8aa";
+const chain = "bsc";
+const apiURL = `https://api.dexscreener.com/latest/dex/pairs/${chain}/${tokenPair}`;
+
+const priceElem = document.getElementById("price");
+const marketCapElem = document.getElementById("marketCap");
+const liquidityElem = document.getElementById("liquidity");
+const volumeElem = document.getElementById("volume");
+const changeElem = document.getElementById("change");
+const ctx = document.getElementById("chart").getContext("2d");
+
+let chart;
+
+async function fetchData() {
+  try {
+    const response = await fetch(apiURL);
+    const data = await response.json();
+    if (!data || !data.pair) return;
+
+    const pairData = data.pair;
+
+    // Update stats
+    priceElem.textContent = `$${parseFloat(pairData.priceUsd).toFixed(6)}`;
+    marketCapElem.textContent = pairData.liquidity?.usd ? `$${Number(pairData.liquidity.usd).toLocaleString()}` : "N/A";
+    liquidityElem.textContent = pairData.liquidity?.usd ? `$${Number(pairData.liquidity.usd).toLocaleString()}` : "N/A";
+    volumeElem.textContent = pairData.volume?.usd_24h ? `$${Number(pairData.volume.usd_24h).toLocaleString()}` : "N/A";
+    changeElem.textContent = pairData.priceChange?.h24 ? `${pairData.priceChange.h24.toFixed(2)}%` : "N/A";
+
+    // Prepare chart data
+    const history = pairData.priceHistory || [];
+    const labels = history.map(h => new Date(h[0]).toLocaleDateString());
+    const prices = history.map(h => parseFloat(h[1]));
+
+    if (chart) chart.destroy();
+
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Price (USD)',
+          data: prices,
+          borderColor: '#00ffcc',
+          backgroundColor: 'rgba(0, 255, 204, 0.1)',
+          tension: 0.2,
+          fill: true,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            callbacks: {
+              label: function(context) {
+                return `$${context.parsed.y.toFixed(6)}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: '#ffffff' },
+            grid: { color: '#1b345d' }
+          },
+          y: {
+            ticks: { color: '#ffffff' },
+            grid: { color: '#1b345d' }
+          }
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error("Error fetching DexScreener data:", error);
+  }
+}
+
+// Initial fetch and update every 30s
+fetchData();
+setInterval(fetchData, 30000);
+  </script>
+
   <div class="tw-actions">
     <button class="btn btn-ghost" id="refreshPrices">Refresh</button>
     <code class="contract">CA: <span id="contractCopy" title="Click to copy">0xb93d116A1CB1AEE03A64053542Ec966368652873</span></code>
@@ -383,6 +546,7 @@
 </body>
 
 </html>
+
 
 
 
