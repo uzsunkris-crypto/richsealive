@@ -446,6 +446,35 @@
       }
     });
   </script>
+
+
+
+<script>
+  async function fetchTokenPrice() {
+    try {
+      const res = await fetch("https://api.dexscreener.com/latest/dex/tokens/0xb93d116A1CB1AEE03A64053542Ec966368652873");
+      const data = await res.json();
+
+      // The first pair usually has the live price
+      const pair = data.pairs[0];
+      const priceUsd = pair.priceUsd;
+
+      document.getElementById("token-price").innerText =
+        `$${parseFloat(priceUsd).toFixed(4)} USD`;
+    } catch (error) {
+      console.error("Error fetching price:", error);
+      document.getElementById("token-price").innerText = "Price unavailable";
+    }
+  }
+
+  // Fetch once on load
+  fetchTokenPrice();
+
+  // Refresh every 30 seconds
+  setInterval(fetchTokenPrice, 30000);
+</script>
+
+
   
 </body>
 </html>
