@@ -1,6 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>$RICHSEA Price Chart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f5f7fa;
+    }
+    .chart-container {
+      width: 100%;
+      max-width: 900px;
+      height: 500px;
+      margin: auto;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background: white;
+      padding: 10px;
+    }
+    .price-box {
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .price-box span {
+      font-weight: bold;
+      color: #2c7be5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="price-box">
+    Current $RICHSEA Price: <span id="priceUSD">Loading...</span>
+  </div>
+  <div class="chart-container" id="chart"></div>
+
+  <!-- TradingView Lightweight Charts -->
+  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+  <!-- Chart Logic -->
+  <script src="chart.js"></script>
+
+</body>
+</html>
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
