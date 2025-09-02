@@ -462,4 +462,13 @@ footer {
 /* ...existing code... */
 
 
+.section-2 .logo {
+  max-width: 100%;   /* prevent it from going outside the box */
+  height: auto;      /* keeps correct aspect ratio */
+  object-fit: contain;  /* makes it fit inside neatly */
+  display: block;
+  margin: 0 auto;    /* centers the image inside the box */
+}
+
+
 
