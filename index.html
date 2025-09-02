@@ -1,50 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>$RICHSEA Price Chart</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background: #f5f7fa;
-    }
-    .chart-container {
-      width: 100%;
-      max-width: 900px;
-      height: 500px;
-      margin: auto;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      background: white;
-      padding: 10px;
-    }
-    .price-box {
-      text-align: center;
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-    .price-box span {
-      font-weight: bold;
-      color: #2c7be5;
-    }
-  </style>
-</head>
-<body>
 
-  <div class="price-box">
-    Current $RICHSEA Price: <span id="priceUSD">Loading...</span>
-  </div>
-  <div class="chart-container" id="chart"></div>
-
-  <!-- TradingView Lightweight Charts -->
-  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
-  <!-- Chart Logic -->
-  <script src="chart.js"></script>
-
-</body>
-</html>
 
 
 
@@ -63,6 +17,7 @@
   <script src="js/app.js" defer></script>
 </head>
 <body>
+
 
 
   <link rel="stylesheet" href="reset.css">
@@ -104,22 +59,11 @@
       
     </nav>
   </header>
-  
-<div class="ticker-bar" aria-live="polite">
-  <div class="ticker-inner" id="ticker">
-    <div class="spinner" aria-label="Loading prices"></div>
-  </div>
-</div>
-<section class="card glass token-widget">
-  <h2>RICHSEA Live</h2>
 
 
-  
-  <div class="tw-actions">
-    <button class="btn btn-ghost" id="refreshPrices">Refresh</button>
-    <code class="contract">CA: <span id="contractCopy" title="Click to copy">0xb93d116A1CB1AEE03A64053542Ec966368652873</span></code>
-  </div>
-</section>
+
+
+
   <!-- Section 1: Hero -->
   <section class="hero">
     <h1 class="welcome">
