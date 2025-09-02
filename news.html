@@ -203,80 +203,6 @@ async function fetchInfo() {
     const pair = data.pairs[0];
     document.getElementById("price").innerText = `$${parseFloat(pair.priceUsd).toFixed(6)}`;
     document.getElementById("change").innerText = `${pair.priceChange.h24 > 0 ? '+' : ''}${pair.priceChange.h24}%`;
-    document.getElementById("change").style.color = pair.priceChange.h24 >= 0 ? "lime" : "red";
-    document.getElementById("mcap").innerText = `MCap: $${(pair.fdv/1e6).toFixed(2)}M`;
-    document.getElementById("liq").innerText = `Liquidity: $${(pair.liquidity.usd/1e3).toFixed(1)}K`;
-  } catch (e) { console.error(e); }
-}
-
-// Fetch candles
-async function fetchCandles() {
-  try {
-    const res = await fetch(`https://io.dexscreener.com/dex/chart/1?token=${contract}&resolution=${timeframe}`);
-    const data = await res.json();
-    if (!data?.series) return;
-    const candles = data.series.map(c => ({
-      time: c[0] / 1000,
-      open: c[1], high: c[2], low: c[3], close: c[4],
-    }));
-    if (chartType === "candles") {
-      candleSeries.setData(candles);
-    } else {
-      lineSeries.setData(candles.map(c => ({ time: c.time, value: c.close })));
-    }
-  } catch (e) { console.error(e); }
-}
-
-// Switch timeframe (desktop buttons)
-document.querySelectorAll(".chart-controls button[data-timeframe]").forEach(btn => {
-  btn.addEventListener("click", e => {
-    timeframe = e.target.dataset.timeframe;
-    document.querySelectorAll(".chart-controls button[data-timeframe]").forEach(b => b.classList.remove("active"));
-    e.target.classList.add("active");
-    fetchCandles();
-  });
-});
-
-// Switch timeframe (mobile dropdown)
-document.getElementById("timeframe-dropdown").addEventListener("change", e => {
-  timeframe = e.target.value;
-  fetchCandles();
-});
-
-// Toggle chart type
-document.getElementById("toggle").addEventListener("click", () => {
-  if (chartType === "candles") {
-    chart.removeSeries(candleSeries);
-    lineSeries = chart.addLineSeries({ color: "#007bff", lineWidth: 2 });
-    chartType = "line";
-    document.getElementById("toggle").innerText = "Line";
-  } else {
-    chart.removeSeries(lineSeries);
-    candleSeries = chart.addCandlestickSeries({
-      upColor: "#007bff", downColor: "#000000",
-      borderUpColor: "#007bff", borderDownColor: "#000000",
-      wickUpColor: "#007bff", wickDownColor: "#000000",
-    });
-    chartType = "candles";
-    document.getElementById("toggle").innerText = "Candles";
-  }
-  fetchCandles();
-});
-
-// Load
-fetchInfo();
-fetchCandles();
-setInterval(fetchInfo, 15000);
-setInterval(fetchCandles, 60000);
-</script>
-
-
-
-
-
-
-
-
 
 
 
@@ -615,6 +541,7 @@ setInterval(fetchCandles, 60000);
 </body>
 
 </html>
+
 
 
 
