@@ -1,4 +1,78 @@
 
+/* =========================================
+   RICHSEA — Global Interactivity & Chatbot
+   ========================================= */
+
+/* ====== CONFIG ====== */
+const RICHSEA_CONTRACT = "0xb93d116A1CB1AEE03A64053542Ec966368652873";
+
+/* ====== Helpers ====== */
+const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const el = (tag, cls) => { const n = document.createElement(tag); if(cls) n.className = cls; return n; };
+const fmt = (n, d=2) => n==null ? "—" : Number(n).toLocaleString(undefined, {maximumFractionDigits:d});
+async function fetchJson(url, timeout=10000){
+  const ctrl = new AbortController();
+  const id = setTimeout(()=>ctrl.abort(), timeout);
+  try{
+    const res = await fetch(url, { signal: ctrl.signal });
+    if(!res.ok) throw new Error(res.statusText);
+    return await res.json();
+  } finally { clearTimeout(id); }
+}
+
+/* =========================================
+   OCEAN: Bubbles on scroll + Turbulence Pulse
+   ========================================= */
+const ocean = $("#ocean");
+let lastBubble = 0;
+
+function spawnBubble(x, y){
+  const b = el("span");
+  b.style.position="fixed";
+  b.style.left = (x|| (Math.random()*window.innerWidth)) + "px";
+  b.style.top  = (y|| (window.innerHeight-20)) + "px";
+  const size = 6 + Math.random()*10;
+  b.style.width = b.style.height = size + "px";
+  b.style.borderRadius="50%";
+  b.style.background="rgba(186, 244, 255, .85)";
+  b.style.boxShadow="0 0 8px rgba(186,244,255,.6)";
+  b.style.pointerEvents="none";
+  b.style.zIndex=1;
+  b.style.animation = "bubbleUp 1.6s linear forwards";
+  document.body.appendChild(b);
+  setTimeout(()=>b.remove(), 1700);
+}
+// bubble keyframes (inject once)
+(function ensureBubbleCSS(){
+  if(document.getElementById("bubbleCSS")) return;
+  const style = document.createElement("style");
+  style.id="bubbleCSS";
+  style.textContent = `
+  @keyframes bubbleUp {
+    from { transform: translateY(0); opacity:.95; }
+    to   { transform: translateY(-160px); opacity:0; }
+  }`;
+  document.head.appendChild(style);
+})();
+
+function turbulencePulse(){
+  if(!ocean) return;
+  ocean.classList.add("pulse");
+  clearTimeout(turbulencePulse._t);
+  turbulencePulse._t = setTimeout(()=> ocean.classList.remove("pulse"), 420);
+}
+
+window.addEventListener("scroll", ()=>{
+  const now = performance.now();
+  if(now - lastBubble > 120){
+    spawnBubble();
+    lastBubble = now;
+  }
+  turbulencePulse();
+});
+
+
 
 /* =========================================
    TICKER + TOKEN WIDGET (CoinGecko)
