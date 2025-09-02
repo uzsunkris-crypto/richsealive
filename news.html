@@ -49,6 +49,238 @@
 </div>
 <section class="card glass token-widget">
   <h2>RICHSEA Live</h2>
+
+<!-- TradingView-Style Responsive Chart Card -->
+<div class="chart-card">
+  <div class="chart-toolbar">
+    <div class="token-info">
+      <span id="price">$0.00</span>
+      <span id="change">(+0.00%)</span>
+      <small id="mcap">MCap: --</small>
+      <small id="liq">Liquidity: --</small>
+    </div>
+    <div class="chart-controls">
+      <div class="timeframes desktop-only">
+        <button data-timeframe="1">1m</button>
+        <button data-timeframe="5" class="active">5m</button>
+        <button data-timeframe="15">15m</button>
+        <button data-timeframe="60">1h</button>
+        <button data-timeframe="240">4h</button>
+        <button data-timeframe="1440">1d</button>
+      </div>
+      <select id="timeframe-dropdown" class="mobile-only">
+        <option value="1">1m</option>
+        <option value="5" selected>5m</option>
+        <option value="15">15m</option>
+        <option value="60">1h</option>
+        <option value="240">4h</option>
+        <option value="1440">1d</option>
+      </select>
+      <button id="toggle">Candles</button>
+    </div>
+  </div>
+  <div id="chart"></div>
+</div>
+
+<style>
+.chart-card {
+  background: #0a1a3c;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+}
+
+.chart-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(10, 20, 50, 0.95);
+  color: #fff;
+  padding: 10px 16px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+.token-info span {
+  margin-right: 12px;
+  font-weight: bold;
+}
+
+.token-info small {
+  margin-right: 10px;
+  opacity: 0.8;
+}
+
+.chart-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.chart-controls button,
+.chart-controls select {
+  background: transparent;
+  border: 1px solid #3a4a7a;
+  color: #fff;
+  margin-left: 6px;
+  margin-top: 4px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chart-controls button:hover,
+.chart-controls select:hover {
+  background: #1a2a5c;
+}
+
+.chart-controls button.active {
+  background: #007bff;
+  border-color: #007bff;
+}
+
+#chart {
+  width: 100%;
+  height: 70vh; /* responsive height */
+  min-height: 400px;
+}
+
+/* Responsive controls */
+.desktop-only { display: flex; }
+.mobile-only { display: none; }
+
+@media (max-width: 600px) {
+  .desktop-only { display: none; }
+  .mobile-only { display: inline-block; }
+  .chart-controls select {
+    padding: 6px;
+    border-radius: 6px;
+    background: #0a1a3c;
+  }
+}
+</style>
+
+<script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+<script>
+const chartEl = document.getElementById("chart");
+const chart = LightweightCharts.createChart(chartEl, {
+  width: chartEl.clientWidth,
+  height: chartEl.clientHeight,
+  layout: { background: { color: "#0a1a3c" }, textColor: "#fff" },
+  grid: {
+    vertLines: { color: "rgba(255,255,255,0.1)" },
+    horzLines: { color: "rgba(255,255,255,0.1)" },
+  },
+});
+
+let candleSeries = chart.addCandlestickSeries({
+  upColor: "#007bff", downColor: "#000000",
+  borderUpColor: "#007bff", borderDownColor: "#000000",
+  wickUpColor: "#007bff", wickDownColor: "#000000",
+});
+
+let lineSeries = null;
+let chartType = "candles";
+const contract = "0xb93d116A1CB1AEE03A64053542Ec966368652873";
+let timeframe = "5";
+
+// Auto resize on window change
+window.addEventListener("resize", () => {
+  chart.applyOptions({ width: chartEl.clientWidth, height: chartEl.clientHeight });
+});
+
+// Fetch live token info
+async function fetchInfo() {
+  try {
+    const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${contract}`);
+    const data = await res.json();
+    if (!data.pairs?.length) return;
+    const pair = data.pairs[0];
+    document.getElementById("price").innerText = `$${parseFloat(pair.priceUsd).toFixed(6)}`;
+    document.getElementById("change").innerText = `${pair.priceChange.h24 > 0 ? '+' : ''}${pair.priceChange.h24}%`;
+    document.getElementById("change").style.color = pair.priceChange.h24 >= 0 ? "lime" : "red";
+    document.getElementById("mcap").innerText = `MCap: $${(pair.fdv/1e6).toFixed(2)}M`;
+    document.getElementById("liq").innerText = `Liquidity: $${(pair.liquidity.usd/1e3).toFixed(1)}K`;
+  } catch (e) { console.error(e); }
+}
+
+// Fetch candles
+async function fetchCandles() {
+  try {
+    const res = await fetch(`https://io.dexscreener.com/dex/chart/1?token=${contract}&resolution=${timeframe}`);
+    const data = await res.json();
+    if (!data?.series) return;
+    const candles = data.series.map(c => ({
+      time: c[0] / 1000,
+      open: c[1], high: c[2], low: c[3], close: c[4],
+    }));
+    if (chartType === "candles") {
+      candleSeries.setData(candles);
+    } else {
+      lineSeries.setData(candles.map(c => ({ time: c.time, value: c.close })));
+    }
+  } catch (e) { console.error(e); }
+}
+
+// Switch timeframe (desktop buttons)
+document.querySelectorAll(".chart-controls button[data-timeframe]").forEach(btn => {
+  btn.addEventListener("click", e => {
+    timeframe = e.target.dataset.timeframe;
+    document.querySelectorAll(".chart-controls button[data-timeframe]").forEach(b => b.classList.remove("active"));
+    e.target.classList.add("active");
+    fetchCandles();
+  });
+});
+
+// Switch timeframe (mobile dropdown)
+document.getElementById("timeframe-dropdown").addEventListener("change", e => {
+  timeframe = e.target.value;
+  fetchCandles();
+});
+
+// Toggle chart type
+document.getElementById("toggle").addEventListener("click", () => {
+  if (chartType === "candles") {
+    chart.removeSeries(candleSeries);
+    lineSeries = chart.addLineSeries({ color: "#007bff", lineWidth: 2 });
+    chartType = "line";
+    document.getElementById("toggle").innerText = "Line";
+  } else {
+    chart.removeSeries(lineSeries);
+    candleSeries = chart.addCandlestickSeries({
+      upColor: "#007bff", downColor: "#000000",
+      borderUpColor: "#007bff", borderDownColor: "#000000",
+      wickUpColor: "#007bff", wickDownColor: "#000000",
+    });
+    chartType = "candles";
+    document.getElementById("toggle").innerText = "Candles";
+  }
+  fetchCandles();
+});
+
+// Load
+fetchInfo();
+fetchCandles();
+setInterval(fetchInfo, 15000);
+setInterval(fetchCandles, 60000);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
   
   <div class="tw-actions">
     <button class="btn btn-ghost" id="refreshPrices">Refresh</button>
@@ -383,6 +615,7 @@
 </body>
 
 </html>
+
 
 
 
