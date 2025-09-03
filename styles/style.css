@@ -254,7 +254,7 @@ border:1px solid var(--stroke); border-radius:16px; padding:1rem;
 .social-row a{display:inline-flex; align-items:center; gap:.4rem; padding:.4rem .6rem; border:1px solid var(--stroke); border-radius:999px}
 
 :root{
-  --bg: #0b1020;
+  --bg:#001f3f;
   --panel: #0f152b;
   --panel-2:#0b1228;
   --text:#eaf2ff;
@@ -502,6 +502,7 @@ nav a {
     padding: 6px;
   }
 }
+
 
 
 
