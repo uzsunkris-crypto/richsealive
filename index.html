@@ -22,6 +22,64 @@
 
 <!-- Sticky Header -->
   <header class="nav-wrap">
+
+
+
+<!-- Navbar -->
+<nav class="bg-[#011229] text-white p-4 flex items-center justify-between">
+  <!-- Logo -->
+  <div class="text-lg font-bold">$RICHSEA</div>
+
+  <!-- Desktop menu -->
+  <div class="hidden md:flex space-x-6">
+    <a href="#" class="hover:text-blue-400">Home</a>
+    <a href="#" class="bg-blue-500 text-white px-3 py-1 rounded-lg">Launch App</a>
+    <a href="#" class="hover:text-blue-400">About</a>
+    <a href="#" class="hover:text-blue-400">Tokenomics</a>
+    <a href="#" class="hover:text-blue-400">Community</a>
+    <a href="#" class="hover:text-blue-400">Dashboard</a>
+    <a href="#" class="hover:text-blue-400">News</a>
+    <a href="#" class="hover:text-blue-400">Contest</a>
+  </div>
+
+  <!-- Mobile menu button -->
+  <button id="menu-btn" class="md:hidden focus:outline-none">
+    <!-- Hamburger icon -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+         viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  </button>
+</nav>
+
+<!-- Mobile Sidebar -->
+<div id="mobile-menu" class="fixed top-0 right-0 h-full w-2/3 bg-[#011229] text-white transform translate-x-full transition-transform duration-300 ease-in-out md:hidden">
+  <div class="p-6 space-y-6">
+    <a href="#" class="block hover:text-blue-400">Home</a>
+    <a href="#" class="block bg-blue-500 text-white px-3 py-1 rounded-lg">Launch App</a>
+    <a href="#" class="block hover:text-blue-400">About</a>
+    <a href="#" class="block hover:text-blue-400">Tokenomics</a>
+    <a href="#" class="block hover:text-blue-400">Community</a>
+    <a href="#" class="block hover:text-blue-400">Dashboard</a>
+    <a href="#" class="block hover:text-blue-400">News</a>
+    <a href="#" class="block hover:text-blue-400">Contest</a>
+  </div>
+</div>
+
+<script>
+  const menuBtn = document.getElementById('menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('translate-x-full');
+    mobileMenu.classList.toggle('translate-x-0');
+  });
+</script>
+
+
+
+    
     <nav class="navbar">
       <a href="index.html" class="brand">
         <img src="images/Richsealogo.png" alt="RichSea logo" class="logo" />
