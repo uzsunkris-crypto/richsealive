@@ -477,3 +477,35 @@ footer {
 
 
 
+/* =======================
+   Navigation Bar Styling
+   ======================= */
+nav {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+}
+
+nav a {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  font-size: 14px;
+  color: white;
+  text-decoration: none;
+  min-width: 0;
+}
+
+@media (max-width: 480px) {
+  nav a {
+    font-size: 12px;
+    padding: 6px;
+  }
+}
+
+
+
+
+
+
+
