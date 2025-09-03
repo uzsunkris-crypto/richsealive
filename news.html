@@ -30,12 +30,23 @@
   
     </nav>
   </header>
-  
-<div class="ticker-bar" aria-live="polite">
-  <div class="ticker-inner" id="ticker">
-    <div class="spinner" aria-label="Loading prices"></div>
-  </div>
-</div>
+
+
+<section class="card glass token-widget">
+  <h2>RICHSEA Live</h2>
+  <div class="tw-row">
+    <div class="tw-stat"><label>Price (USD)</label><div id="rsPrice" class="stat-value">0.04981</div></div>
+    <div class="tw-stat"><label>Liquidity(USD)</label><div id="rsChange" class="stat-value">9300</div></div>
+    <div class="tw-stat"><label>Market Cap(USD)</label><div id="rsMcap" class="stat-value">61000</div></div>
+    <div class="tw-stat"><label>24h Volume(USD)</label><div id="rsVol" class="stat-value">11000</div></div>
+  </div>
+  <div class="tw-actions">
+    <button class="btn btn-ghost" id="refreshPrices">view on dexscreener</button>
+    <code class="contract">CA: <span id="contractCopy" title="Click to copy">0xb93d116A1CB1AEE03A64053542Ec966368652873</span></code>
+  </div>
+  </section>
+
+
 
 
   <!-- Featured Video Carousel -->
@@ -361,6 +372,7 @@
 </body>
 
 </html>
+
 
 
 
