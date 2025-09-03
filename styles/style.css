@@ -506,35 +506,3 @@ nav a {
 
 
 
-/* Apply same style to header and footer */
-header, footer {
-  background: #0b1c2c;       /* same dark tone as header */
-  padding: 15px 20px;
-  border-radius: 16px;       /* rounded corners */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin: 10px;
-}
-
-/* Style footer links */
-footer a {
-  color: #ffffff;
-  text-decoration: none;
-  font-weight: 500;
-  padding: 6px 12px;
-  transition: 0.3s;
-}
-
-footer a:hover {
-  background: #1e3a5f;
-  border-radius: 8px;
-}
-
-
-
-
-
-
