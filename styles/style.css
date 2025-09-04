@@ -824,3 +824,30 @@ canvas:hover {
 }
 
 
+
+
+
+
+
+
+/* Force desktop-like horizontal news layout on mobile */
+.latest-news {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: auto;       /* enable horizontal scrolling */
+  gap: 16px;              /* space between news cards */
+  -webkit-overflow-scrolling: touch; /* smooth scroll on iOS */
+  scrollbar-width: none;  /* hide scrollbar in Firefox */
+}
+.latest-news::-webkit-scrollbar {
+  display: none;          /* hide scrollbar in Chrome/Safari */
+}
+
+.latest-news .news-card {
+  min-width: 280px;       /* keep card size readable */
+  flex: 0 0 auto;         /* prevent shrinking */
+     }
+
+
+
