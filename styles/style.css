@@ -180,81 +180,76 @@ border:1px solid var(--stroke); border-radius:16px; padding:1rem;
 /* ===== News Slider (Section 4 and News page) ===== */
 
 
-
-/* Sections should stack vertically */
-.news-rail,
-.videos-rail {
-  display: block;
-  position: relative;
+/* ===== News Section ===== */
+.news-rail {
+  margin: 2rem auto;
   width: min(1200px, 92vw);
-  margin: 1.2rem auto;
 }
 
-/* News cards carousel */
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
 .news-track {
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 25%; /* 4 per row desktop */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding-bottom: .5rem;
 }
 
-/* News cards */
 .news-card {
-  scroll-snap-align: start;
   border: 1px solid var(--stroke);
   border-radius: 14px;
   padding: 1rem;
   background: rgba(0,0,0,.35);
   box-shadow: 0 0 0 1px rgba(0,0,0,.25), 0 12px 30px rgba(0,0,0,.25);
-  flex-shrink: 0; /* <-- important: prevents shrinking */
 }
 
-/* Videos carousel */
+/* Mobile: force 2 cards per row */
+@media (max-width: 768px) {
+  .news-track {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===== Videos Section ===== */
+.videos-rail {
+  margin: 2rem auto;
+  width: min(1200px, 92vw);
+}
+
 .videos-track {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 50%; /* 2 visible desktop */
+  grid-auto-columns: calc(50% - .5rem); /* 2 per screen mobile */
   gap: 1rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding-bottom: .5rem;
 }
+
 .video-card {
   scroll-snap-align: start;
   border: 1px solid var(--stroke);
   border-radius: 14px;
   padding: .8rem;
   background: rgba(0,0,0,.35);
-  flex-shrink: 0; /* <-- important */
 }
 
-/* Mobile */
-@media (max-width: 900px) {
-  .news-track {
-    grid-auto-columns: 100%; /* one full-width news card */
-  }
+.video-card iframe {
+  border-radius: 10px;
+  margin-bottom: .5rem;
+}
+
+/* Desktop: show 3 videos per screen */
+@media (min-width: 1024px) {
   .videos-track {
-    grid-auto-columns: 100%; /* one video per swipe */
+    grid-auto-columns: calc(33.333% - .66rem);
   }
 }
 
 
-
-/* ===== News Slider (Section 4 and News page) ===== */
-
-
-/* ===== Mobile Responsive Adjustments ===== */
-@media (max-width: 900px) {
-  .news-track {
-    grid-auto-columns: 100%; /* full width news card */
-  }
-  .videos-track {
-    grid-auto-columns: 100%; /* one video at a time in carousel */
-  }
-}
 
 
 /* ===== Tokenomics 3D-ish Pie ===== */
@@ -800,6 +795,7 @@ canvas:hover {
   position: relative;   /* reset if it was absolute */
   z-index: 2;           /* make sure it shows properly */
 }
+
 
 
 
