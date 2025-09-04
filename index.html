@@ -48,49 +48,6 @@
   <h2>RICHSEA Live</h2>
   <div class="tw-row">
 
-<div id="token-widget" class="token-widget">
-  <h2>Loading...</h2>
-  <div class="field"><span class="label">Price:</span><span class="value">–</span></div>
-  <div class="field"><span class="label">24 h Volume:</span><span class="value">–</span></div>
-  <div class="field"><span class="label">Liquidity:</span><span class="value">–</span></div>
-  <div class="field"><span class="label">Market Cap:</span><span class="value">–</span></div>
-</div>
-
-<script>
-  async function updateTokenWidget() {
-    const widget = document.getElementById("token-widget");
-    try {
-      const resp = await fetch(
-        "https://api.dexscreener.com/latest/dex/pairs/bsc/0xb93d116A1CB1AEE03A64053542Ec966368652873"
-      );
-      const json = await resp.json();
-      const pair = json.pairs?.[0];
-      if (!pair) throw new Error("Token pair not found");
-
-      widget.querySelector("h2").textContent =
-        pair.baseToken.symbol + " / " + pair.quoteToken.symbol;
-
-      widget.querySelectorAll(".field .value")[0].textContent =
-        "$" + Number(pair.priceUsd).toLocaleString(undefined, { maximumFractionDigits: 6 });
-
-      widget.querySelectorAll(".field .value")[1].textContent =
-        "$" + (pair.volume?.h24 ?? 0).toLocaleString();
-
-      widget.querySelectorAll(".field .value")[2].textContent =
-        "$" + (pair.liquidity?.usd ?? 0).toLocaleString();
-
-      widget.querySelectorAll(".field .value")[3].textContent =
-        "$" + (pair.marketCap ?? 0).toLocaleString();
-    } catch (err) {
-      widget.querySelector("h2").textContent = "Error loading token";
-      console.error(err);
-    }
-  }
-
-  updateTokenWidget();
-  setInterval(updateTokenWidget, 60 * 1000); // refresh every 60s
-</script>
-    
 
     <div class="tw-stat"><label>Price (USD)</label><div id="rsPrice" class="stat-value">0.00004981</div></div>
     <div class="tw-stat"><label>Liquidity(USD)</label><div id="rsChange" class="stat-value">9300</div></div>
