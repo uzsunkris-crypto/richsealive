@@ -507,3 +507,35 @@ nav a {
 
 
 
+
+.richsea-live-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  flex-wrap: wrap; /* Makes it responsive */
+}
+
+.richsea-info {
+  flex: 1 1 250px;
+  background: #0b1e3d;
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.richsea-image {
+  flex: 1 1 150px;
+  text-align: center;
+}
+
+.richsea-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+   }
+
+
+
+
