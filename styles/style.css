@@ -180,20 +180,28 @@ border:1px solid var(--stroke); border-radius:16px; padding:1rem;
 /* ===== News Slider (Section 4 and News page) ===== */
 
 
-/* ===== News Slider (Section 4 and News page) ===== */
-.news-rail {
-  margin: 1.2rem auto 3rem; /* space below news */
+
+/* Sections should stack vertically */
+.news-rail,
+.videos-rail {
+  display: block;
+  position: relative;
   width: min(1200px, 92vw);
+  margin: 1.2rem auto;
 }
+
+/* News cards carousel */
 .news-track {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 25%; /* desktop: 4 per row */
+  grid-auto-columns: 25%; /* 4 per row desktop */
   gap: 1rem;
-  overflow: auto;
+  overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding-bottom: .5rem;
 }
+
+/* News cards */
 .news-card {
   scroll-snap-align: start;
   border: 1px solid var(--stroke);
@@ -201,34 +209,16 @@ border:1px solid var(--stroke); border-radius:16px; padding:1rem;
   padding: 1rem;
   background: rgba(0,0,0,.35);
   box-shadow: 0 0 0 1px rgba(0,0,0,.25), 0 12px 30px rgba(0,0,0,.25);
-  position: relative;
+  flex-shrink: 0; /* <-- important: prevents shrinking */
 }
-.news-card.glow {
-  box-shadow: 0 0 18px rgba(0,204,255,.25), 0 0 50px rgba(0,204,255,.12);
-}
-.news-card h4 { margin-bottom: .4rem; }
-.news-meta {
-  display: flex;
-  gap: .6rem;
-  align-items: center;
-  color: var(--muted);
-  font-size: .9rem;
-  margin: .4rem 0 .6rem;
-}
-.news-actions { display: flex; gap: .5rem; margin-top: .6rem; }
-.news-actions .btn { padding: .45rem .7rem; }
 
-/* ===== Videos Slider (Homepage & News page) ===== */
-.videos-rail {
-  margin: 0 auto 1.2rem; /* space neatly after news */
-  width: min(1200px, 92vw);
-}
+/* Videos carousel */
 .videos-track {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 50%; /* desktop: 2 cards visible in carousel */
+  grid-auto-columns: 50%; /* 2 visible desktop */
   gap: 1rem;
-  overflow: auto;
+  overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding-bottom: .5rem;
 }
@@ -238,7 +228,23 @@ border:1px solid var(--stroke); border-radius:16px; padding:1rem;
   border-radius: 14px;
   padding: .8rem;
   background: rgba(0,0,0,.35);
+  flex-shrink: 0; /* <-- important */
 }
+
+/* Mobile */
+@media (max-width: 900px) {
+  .news-track {
+    grid-auto-columns: 100%; /* one full-width news card */
+  }
+  .videos-track {
+    grid-auto-columns: 100%; /* one video per swipe */
+  }
+}
+
+
+
+/* ===== News Slider (Section 4 and News page) ===== */
+
 
 /* ===== Mobile Responsive Adjustments ===== */
 @media (max-width: 900px) {
@@ -794,6 +800,7 @@ canvas:hover {
   position: relative;   /* reset if it was absolute */
   z-index: 2;           /* make sure it shows properly */
 }
+
 
 
 
