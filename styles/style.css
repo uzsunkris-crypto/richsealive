@@ -602,3 +602,33 @@ nav a {
   background: #16a34a; /* green when copied */
   transform: scale(1.05);
 }
+
+
+
+
+
+/* Assuming your header uses .site-header */
+.contract-address {
+  background-color: inherit;  /* use same color as header */
+  color: #ffffff;             /* white text, same as header */
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: monospace;     /* clean look for addresses */
+  font-size: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1); /* optional divider */
+}
+
+.contract-address button {
+  background: #1a73e8;  /* or copy your header button style */
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.contract-address button:hover {
+  background: #1669c1;
+}
