@@ -222,6 +222,101 @@
 
 
 
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Richsea Tokenomics</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: radial-gradient(circle at center, #0f172a, #000);
+      font-family: Arial, sans-serif;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    h2 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    #tokenomicsChart {
+      max-width: 600px;
+      margin: auto;
+    }
+    canvas {
+      filter: drop-shadow(4px 6px 8px rgba(0,0,0,0.6));
+    }
+  </style>
+</head>
+<body>
+  <h2>Richsea Tokenomics</h2>
+  <div id="tokenomicsChart">
+    <canvas id="chartCanvas"></canvas>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('chartCanvas').getContext('2d');
+
+    // Create gradient fills for "3D effect"
+    const gradient1 = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient1.addColorStop(0, '#34d399');
+    gradient1.addColorStop(1, '#059669');
+
+    const gradient2 = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient2.addColorStop(0, '#facc15');
+    gradient2.addColorStop(1, '#ca8a04');
+
+    const gradient3 = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient3.addColorStop(0, '#60a5fa');
+    gradient3.addColorStop(1, '#1d4ed8');
+
+    const gradient4 = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient4.addColorStop(0, '#f472b6');
+    gradient4.addColorStop(1, '#be185d');
+
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: [
+          'Liquidity (40%)',
+          'Farming Rewards (30%)',
+          'Treasury & Growth (20%)',
+          'Team (10%)'
+        ],
+        datasets: [{
+          data: [40, 30, 20, 10],
+          backgroundColor: [gradient1, gradient2, gradient3, gradient4],
+          borderWidth: 3,
+          borderColor: '#0f172a'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#e2e8f0',
+              font: { size: 14 }
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `${context.label}: ${context.raw}%`;
+              }
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+
 
   
 
