@@ -309,7 +309,6 @@
 
 
 
-
 <!-- Chart Container -->
 <div style="max-width: 400px; margin: auto; padding: 20px; background: #0b0f1a; border-radius: 16px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);">
   <canvas id="tokenomicsChart"></canvas>
@@ -329,7 +328,7 @@
   </a>
 </div>
 
-<!-- Button + Slice Glow Animation -->
+<!-- Button Glow Animation -->
 <style>
   .pulse-button {
     background: linear-gradient(90deg, #00faff, #0088ff);
@@ -343,12 +342,10 @@
     display: inline-block;
     animation: pulseGlow 2s infinite;
   }
-
   .pulse-button:hover {
     transform: scale(1.05);
     box-shadow: 0 0 25px rgba(0, 255, 255, 0.9);
   }
-
   @keyframes pulseGlow {
     0% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.6); }
     50% { box-shadow: 0 0 25px rgba(0, 255, 255, 1); }
@@ -367,11 +364,11 @@
     datasets: [{
       data: [15, 15, 5, 5, 60],
       backgroundColor: [
-        "rgba(59, 130, 246, 0.9)", // blue-500
-        "rgba(37, 99, 235, 0.9)",  // blue-600
-        "rgba(29, 78, 216, 0.9)",  // blue-700
-        "rgba(30, 64, 175, 0.9)",  // blue-800
-        "rgba(23, 37, 84, 0.9)"    // blue-900
+        "rgba(59, 130, 246, 0.9)",
+        "rgba(37, 99, 235, 0.9)",
+        "rgba(29, 78, 216, 0.9)",
+        "rgba(30, 64, 175, 0.9)",
+        "rgba(23, 37, 84, 0.9)"
       ],
       borderColor: "#00faff",
       borderWidth: 2,
@@ -384,9 +381,8 @@
     id: "neonPulse",
     beforeDraw(chart) {
       const ctx = chart.ctx;
-      const time = Date.now() / 500; // pulsing speed
-      const pulse = Math.sin(time) * 10 + 20; // shadowBlur oscillates between 10-30
-
+      const time = Date.now() / 500;
+      const pulse = Math.sin(time) * 10 + 20; // 10–30 blur range
       chart.data.datasets.forEach((dataset, i) => {
         const meta = chart.getDatasetMeta(i);
         meta.data.forEach((element, index) => {
@@ -408,7 +404,7 @@
     options: {
       responsive: true,
       plugins: {
-        legend: { display: false }, // 🚫 legend hidden
+        legend: { display: false },
         title: {
           display: true,
           text: "Richsea Tokenomics",
@@ -416,7 +412,7 @@
           font: { size: 20, weight: "bold" }
         },
         outlabels: {
-          text: "%l %p", // label + percentage
+          text: "%l %p",
           color: "white",
           stretch: 25,
           font: {
@@ -427,25 +423,38 @@
           }
         }
       },
-      animation: {
-        duration: 0 // disable default animation, so pulse is smooth
-      }
+      animation: { duration: 0 }
     },
     plugins: [neonPulse]
   };
 
-  // Render Chart
   const tokenomicsChart = new Chart(
     document.getElementById("tokenomicsChart"),
     config
   );
 
-  // ✅ Animate chart continuously (so pulse works)
+  // ✅ Animate chart continuously
   function animatePulse() {
-    tokenomicsChart.update("none"); // redraw without animation
+    tokenomicsChart.update("none");
     requestAnimationFrame(animatePulse);
   }
   animatePulse();
+
+  // 🎯 Count-up function
+  function animateValue(id, start, end, duration) {
+    const obj = document.getElementById(id);
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const value = start + (end - start) * progress;
+      obj.innerText = `$${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    };
+    requestAnimationFrame(step);
+  }
 
   // ✅ Fetch live Richsea stats
   async function fetchRichseaData() {
@@ -454,28 +463,32 @@
       const response = await fetch(url);
       const psData = await response.json();
 
+      console.log("Dexscreener data:", psData); // 🐞 Debug
+
       let marketData = null;
       if (psData.pairs && psData.pairs.length > 0) {
         marketData = psData.pairs.find(p => p.dexId === "pancakeswap") || psData.pairs[0];
       }
 
-      const priceUsd = marketData ? marketData.priceUsd : "N/A";
-      const liquidityUsd = marketData ? marketData.liquidity.usd : "N/A";
-      const marketCap = marketData ? marketData.fdv : "N/A";
+      const priceUsd = marketData ? parseFloat(marketData.priceUsd) : NaN;
+      const liquidityUsd = marketData ? parseFloat(marketData.liquidity.usd) : NaN;
+      const marketCap = marketData ? parseFloat(marketData.fdv) : NaN;
 
-      document.getElementById("price").innerText = `$${Number(priceUsd).toLocaleString()}`;
-      document.getElementById("liquidity").innerText = `$${Number(liquidityUsd).toLocaleString()}`;
-      document.getElementById("marketcap").innerText = `$${Number(marketCap).toLocaleString()}`;
+      if (!isNaN(priceUsd)) animateValue("price", 0, priceUsd, 1200); else document.getElementById("price").innerText = "N/A";
+      if (!isNaN(liquidityUsd)) animateValue("liquidity", 0, liquidityUsd, 1200); else document.getElementById("liquidity").innerText = "N/A";
+      if (!isNaN(marketCap)) animateValue("marketcap", 0, marketCap, 1200); else document.getElementById("marketcap").innerText = "N/A";
 
     } catch (error) {
       console.error("Error fetching Richsea data:", error);
+      document.getElementById("price").innerText = "N/A";
+      document.getElementById("liquidity").innerText = "N/A";
+      document.getElementById("marketcap").innerText = "N/A";
     }
   }
 
   fetchRichseaData();
   setInterval(fetchRichseaData, 30000);
 </script>
-
   
 
 
