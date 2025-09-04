@@ -412,3 +412,123 @@ function copyAddress() {
     }, 2000);
   });
 }
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+const tokenAddress = "0xb93d116A1CB1AEE03A64053542Ec966368652873";
+
+// === Render icons ===
+lucide.createIcons();
+
+// === Animate Numbers ===
+function animateValue(elementId, start, end, duration, suffix = "") {
+  const element = document.getElementById(elementId);
+  if (!element) return;
+
+  const range = end - start;
+  if (range === 0) {
+    element.innerText = end.toLocaleString() + suffix;
+    return;
+  }
+  const stepTime = Math.max(Math.floor(duration / Math.abs(range)), 20);
+  let current = start;
+  const increment = end > start ? 1 : -1;
+
+  const timer = setInterval(() => {
+    current += increment;
+    element.innerText = current.toLocaleString() + suffix;
+    if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+      element.innerText = end.toLocaleString() + suffix;
+      clearInterval(timer);
+    }
+  }, stepTime);
+}
+
+// === Chart.js Pie Chart ===
+const ctx = document.getElementById('chartCanvas').getContext('2d');
+const gradient1 = ctx.createLinearGradient(0, 0, 0, 400);
+gradient1.addColorStop(0, '#34d399'); gradient1.addColorStop(1, '#059669');
+const gradient2 = ctx.createLinearGradient(0, 0, 0, 400);
+gradient2.addColorStop(0, '#facc15'); gradient2.addColorStop(1, '#ca8a04');
+const gradient3 = ctx.createLinearGradient(0, 0, 0, 400);
+gradient3.addColorStop(0, '#60a5fa'); gradient3.addColorStop(1, '#1d4ed8');
+const gradient4 = ctx.createLinearGradient(0, 0, 0, 400);
+gradient4.addColorStop(0, '#f472b6'); gradient4.addColorStop(1, '#be185d');
+
+new Chart(ctx, {
+  type: 'pie',
+  data: {
+    labels: [
+      'Liquidity (40%)',
+      'Farming Rewards (30%)',
+      'Treasury & Growth (20%)',
+      'Team (10%)'
+    ],
+    datasets: [{
+      data: [40, 30, 20, 10],
+      backgroundColor: [gradient1, gradient2, gradient3, gradient4],
+      borderWidth: 3,
+      borderColor: '#0f172a'
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { color: '#e2e8f0', font: { size: 14 } }
+      }
+    },
+    animation: {
+      animateRotate: true,
+      animateScale: true,
+      duration: 2000,
+      easing: "easeOutElastic"
+    }
+  }
+});
+
+// === Fetch Live Stats from DexScreener ===
+async function fetchLiveStats() {
+  try {
+    const psRes = await fetch("https://api.dexscreener.com/latest/dex/tokens/" + tokenAddress);
+    const psData = await psRes.json();
+    const marketData = psData.pairs && psData.pairs[0] ? psData.pairs[0] : null;
+
+    const priceUsd = marketData ? marketData.priceUsd : "N/A";
+    const liquidityUsd = marketData ? marketData.liquidity.usd : "N/A";
+    const marketCap = marketData ? marketData.fdv : "N/A";
+
+    // ==== Update UI ====
+    document.getElementById("price").innerText = priceUsd !== "N/A"
+      ? `$${Number(priceUsd).toFixed(6)}`
+      : "N/A";
+
+    if (marketCap !== "N/A") {
+      animateValue("marketCap", 0, Math.floor(Number(marketCap)), 1500, " USD");
+    } else {
+      document.getElementById("marketCap").innerText = "N/A";
+    }
+
+    if (liquidityUsd !== "N/A") {
+      animateValue("liquidity", 0, Math.floor(Number(liquidityUsd)), 1500, " USD");
+    } else {
+      document.getElementById("liquidity").innerText = "N/A";
+    }
+
+    // Last updated
+    document.getElementById("lastUpdated").innerText = new Date().toLocaleTimeString();
+  } catch (err) {
+    console.error("Error fetching token stats:", err);
+  }
+}
+
+fetchLiveStats();
+setInterval(fetchLiveStats, 60000); // refresh every 60s
+</script>
