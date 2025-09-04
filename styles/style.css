@@ -549,3 +549,13 @@ nav a {
 
 
 
+
+.contract-address {
+  white-space: nowrap;       /* Keep it in one line */
+  overflow-x: auto;          /* Allow horizontal scrolling if needed */
+  display: block;
+  font-family: monospace;    /* Easier to read addresses */
+  font-size: 0.85rem;        /* Slightly smaller for mobile */
+  word-break: break-all;     /* Breaks if the container is very small */
+}
+
