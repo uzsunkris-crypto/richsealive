@@ -739,3 +739,24 @@ canvas:hover {
 
 
 
+
+
+
+
+
+
+
+.news-glass {
+  position: relative;   /* prevent overlapping */
+  z-index: 1;           /* keep it above background only */
+  margin-bottom: 20px;  /* space between news and video */
+}
+
+.video-slider {
+  position: relative;   /* reset if it was absolute */
+  z-index: 2;           /* make sure it shows properly */
+}
+
+
+
+
