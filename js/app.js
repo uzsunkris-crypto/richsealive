@@ -392,3 +392,23 @@ document.addEventListener("DOMContentLoaded", ()=>{
     setTimeout(()=> RS.launcher.click(), 800);
   }
 });
+
+
+
+
+
+
+function copyAddress() {
+  const address = document.getElementById("contract-address").innerText;
+  const btn = document.getElementById("copy-btn");
+
+  navigator.clipboard.writeText(address).then(() => {
+    btn.innerText = "✔ Copied!";
+    btn.classList.add("copied");
+
+    setTimeout(() => {
+      btn.innerText = "📋 Copy";
+      btn.classList.remove("copied");
+    }, 2000);
+  });
+}
