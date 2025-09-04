@@ -211,71 +211,7 @@
 
 
 
-<!-- Chart Container -->
-<div style="max-width: 400px; margin: auto; padding: 20px; background: #0b0f1a; border-radius: 16px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);">
-  <canvas id="tokenomicsChart"></canvas>
-</div>
 
-<!-- Live Stats -->
-<div style="text-align: center; margin-top: 20px; color: #fff; font-family: Arial, sans-serif;">
-  <p><strong>💰 Price:</strong> <span id="price">Loading...</span></p>
-  <p><strong>🌊 Liquidity:</strong> <span id="liquidity">Loading...</span></p>
-  <p><strong>📊 Market Cap:</strong> <span id="marketcap">Loading...</span></p>
-</div>
-
-<!-- View Full Tokenomics Button -->
-<div style="text-align: center; margin-top: 15px;">
-  <a href="/tokenomics.html" class="pulse-button">
-    🔎 View Full Tokenomics
-  </a>
-</div>
-
-<!-- Button Glow Animation -->
-<style>
-  .pulse-button {
-    background: linear-gradient(90deg, #00faff, #0088ff);
-    padding: 12px 24px;
-    border-radius: 8px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
-    transition: 0.3s;
-    display: inline-block;
-    animation: pulseGlow 2s infinite;
-  }
-  .pulse-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 25px rgba(0, 255, 255, 0.9);
-  }
-  @keyframes pulseGlow {
-    0% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.6); }
-    50% { box-shadow: 0 0 25px rgba(0, 255, 255, 1); }
-    100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.6); }
-  }
-</style>
-
-<!-- Chart.js + Plugins -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-piechart-outlabels"></script>
-
-<script>
-  // 🎨 Token Allocation (shades of blue)
-  const data = {
-    labels: ["Team", "Sale", "Airdrops", "Foundation", "Validators"],
-    datasets: [{
-      data: [15, 15, 5, 5, 60],
-      backgroundColor: [
-        "rgba(59, 130, 246, 0.9)",
-        "rgba(37, 99, 235, 0.9)",
-        "rgba(29, 78, 216, 0.9)",
-        "rgba(30, 64, 175, 0.9)",
-        "rgba(23, 37, 84, 0.9)"
-      ],
-      borderColor: "#00faff",
-      borderWidth: 2,
-      hoverOffset: 20
-    }]
   };
 
   // 🌟 Neon Glow + Pulse Plugin
@@ -457,82 +393,7 @@
             resizable: true,
             minSize: 10,
             maxSize: 14,
-            weight: "bold"
-          }
-        }
-      },
-      animation: { duration: 0 }
-    },
-    plugins: [neonPulse]
-  };
 
-  const tokenomicsChart = new Chart(
-    document.getElementById("tokenomicsChart"),
-    config
-  );
-
-  // ✅ Continuous pulse animation
-  function animatePulse() {
-    tokenomicsChart.update("none");
-    requestAnimationFrame(animatePulse);
-  }
-  animatePulse();
-
-  // 🎯 Count-up function
-  function animateValue(id, start, end, duration) {
-    const obj = document.getElementById(id);
-    let startTimestamp = null;
-    const step = (timestamp) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      const value = start + (end - start) * progress;
-      obj.innerText = `$${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
-      if (progress < 1) {
-        requestAnimationFrame(step);
-      }
-    };
-    requestAnimationFrame(step);
-  }
-
-  // ✅ Fetch live Richsea stats from Dexscreener
-  async function fetchRichseaData() {
-    try {
-      const url = "https://api.dexscreener.com/latest/dex/tokens/0xb93d116A1CB1AEE03A64053542Ec966368652873";
-      const response = await fetch(url);
-      const psData = await response.json();
-
-      console.log("Dexscreener data:", psData); // 🐞 debug
-
-      let marketData = null;
-      if (psData.pairs && psData.pairs.length > 0) {
-        marketData = psData.pairs.find(p => p.dexId === "pancakeswap") || psData.pairs[0];
-      }
-
-      const priceUsd = marketData ? parseFloat(marketData.priceUsd) : NaN;
-      const liquidityUsd = marketData ? parseFloat(marketData.liquidity.usd) : NaN;
-      const marketCap = marketData ? parseFloat(marketData.fdv) : NaN;
-
-      if (!isNaN(priceUsd)) animateValue("price", 0, priceUsd, 1200);
-      else document.getElementById("price").innerText = "N/A";
-
-      if (!isNaN(liquidityUsd)) animateValue("liquidity", 0, liquidityUsd, 1200);
-      else document.getElementById("liquidity").innerText = "N/A";
-
-      if (!isNaN(marketCap)) animateValue("marketcap", 0, marketCap, 1200);
-      else document.getElementById("marketcap").innerText = "N/A";
-
-    } catch (error) {
-      console.error("Error fetching Richsea data:", error);
-      document.getElementById("price").innerText = "N/A";
-      document.getElementById("liquidity").innerText = "N/A";
-      document.getElementById("marketcap").innerText = "N/A";
-    }
-  }
-
-  // Run once + refresh every 30s
-  fetchRichseaData();
-  setInterval(fetchRichseaData, 30000);
-      </script>
 
 
   <!-- Section: News Preview -->
