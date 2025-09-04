@@ -48,6 +48,85 @@
   <h2>RICHSEA Live</h2>
   <div class="tw-row">
 
+    <script>
+const TOKEN_CA = "0xb93d116A1CB1AEE03A64053542Ec966368652873".toLowerCase();
+const CHAIN = "bsc";
+const PREFERRED_DEX = ["pancakeswap-v2", "pancakeswap"];
+
+function fmtUSD(x, maxFrac=6){
+  if (!Number.isFinite(x)) return "–";
+  const abs = Math.abs(x);
+  const opts = abs < 1
+    ? { minimumFractionDigits: 2, maximumFractionDigits: Math.max(4, maxFrac) }
+    : { maximumFractionDigits: 6 };
+  return "$" + Number(x).toLocaleString(undefined, opts);
+}
+
+async function pickBestPair(){
+  const url = `https://api.dexscreener.com/latest/dex/tokens/${TOKEN_CA}`;
+  const res = await fetch(url, { cache: "no-store" });
+  const data = await res.json();
+  let pairs = data?.pairs || [];
+
+  // Only BSC and pairs that actually include our token
+  pairs = pairs.filter(p =>
+    p.chainId === CHAIN &&
+    (p.baseToken?.address?.toLowerCase() === TOKEN_CA ||
+     p.quoteToken?.address?.toLowerCase() === TOKEN_CA)
+  );
+
+  if (!pairs.length) throw new Error("No BSC pairs for this token.");
+
+  // Prefer: our token as BASE + PancakeSwap; then highest liquidity
+  pairs.sort((a,b) => {
+    const score = p => (
+      (p.baseToken?.address?.toLowerCase() === TOKEN_CA ? 2 : 0) +
+      (PREFERRED_DEX.includes((p.dexId||"").toLowerCase()) ? 1 : 0)
+    );
+    const s = score(b) - score(a);
+    if (s !== 0) return s;
+    return (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0);
+  });
+
+  const best = pairs[0];
+
+  // Normalize price to be YOUR token's USD price
+  let priceUsd;
+  if (best.baseToken?.address?.toLowerCase() === TOKEN_CA){
+    priceUsd = Number(best.priceUsd);
+  } else {
+    // your token is the QUOTE token → invert
+    const baseUsd = Number(best.priceUsd);        // USD price of base token
+    const ratio   = Number(best.price);           // base per quote
+    priceUsd = ratio ? (baseUsd / ratio) : NaN;   // USD price of quote (your token)
+  }
+
+  return { pair: best, priceUsd };
+}
+
+async function render(){
+  const root = document.getElementById("token-widget");
+  try{
+    const { pair, priceUsd } = await pickBestPair();
+    root.querySelector('[data-field="name"]').textContent =
+      `${pair.baseToken.symbol} / ${pair.quoteToken.symbol} • ${pair.dexId}`;
+
+    root.querySelector('[data-field="price"]').textContent = fmtUSD(priceUsd, 8);
+    root.querySelector('[data-field="volume"]').textContent = fmtUSD(Number(pair.volume?.h24 || 0), 0);
+    root.querySelector('[data-field="liquidity"]').textContent = fmtUSD(Number(pair.liquidity?.usd || 0), 0);
+
+    // Use marketCap if present; fall back to FDV
+    const mc = Number(pair.marketCap ?? pair.fdv ?? 0);
+    root.querySelector('[data-field="marketcap"]').textContent = mc ? fmtUSD(mc, 0) : "–";
+  }catch(e){
+    console.error(e);
+    document.querySelector('[data-field="name"]').textContent = "Error loading token";
+  }
+}
+
+render();
+setInterval(render, 60_000); // refresh every 60s
+  </script>
 
     <div class="tw-stat"><label>Price (USD)</label><div id="rsPrice" class="stat-value">0.00004981</div></div>
     <div class="tw-stat"><label>Liquidity(USD)</label><div id="rsChange" class="stat-value">9300</div></div>
