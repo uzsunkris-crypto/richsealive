@@ -559,3 +559,46 @@ nav a {
   word-break: break-all;     /* Breaks if the container is very small */
 }
 
+
+
+
+.contract-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #0d1b2a;   /* dark background */
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #fff;
+  font-family: monospace;
+}
+
+#contract-address {
+  white-space: nowrap;
+  overflow-x: auto;
+  font-size: clamp(0.7rem, 2.5vw, 1rem); /* responsive font */
+  margin: 0;
+}
+
+.copy-btn {
+  background: #1d4ed8; /* blue button */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.copy-btn:hover {
+  background: #2563eb;
+}
+
+.copy-btn.copied {
+  background: #16a34a; /* green when copied */
+  transform: scale(1.05);
+}
