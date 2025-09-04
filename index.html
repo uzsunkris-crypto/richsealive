@@ -348,51 +348,7 @@
       borderWidth: 2,
       hoverOffset: 20
     }]
-  };
 
-  // 🌟 Neon Glow + Pulse Plugin
-  const neonPulse = {
-    id: "neonPulse",
-    beforeDraw(chart) {
-      const ctx = chart.ctx;
-      const time = Date.now() / 500;
-      const pulse = Math.sin(time) * 10 + 20; // 10–30 blur
-      chart.data.datasets.forEach((dataset, i) => {
-        const meta = chart.getDatasetMeta(i);
-        meta.data.forEach((element, index) => {
-          ctx.save();
-          ctx.shadowColor = dataset.backgroundColor[index];
-          ctx.shadowBlur = pulse;
-          ctx.shadowOffsetX = 0;
-          ctx.shadowOffsetY = 0;
-          element.draw(ctx);
-          ctx.restore();
-        });
-      });
-    }
-  };
-
-  const config = {
-    type: "pie",
-    data: data,
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        title: {
-          display: true,
-          text: "Richsea Tokenomics",
-          color: "#00faff",
-          font: { size: 20, weight: "bold" }
-        },
-        outlabels: {
-          text: "%l %p",
-          color: "white",
-          stretch: 25,
-          font: {
-            resizable: true,
-            minSize: 10,
-            maxSize: 14,
 
 
 
