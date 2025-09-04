@@ -207,7 +207,221 @@
 
 
 
+<!-- Chart Container -->
+<div style="max-width: 400px; margin: auto; padding: 20px; background: #0b0f1a; border-radius: 16px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); position: relative;">  
+  <canvas id="tokenomicsChart"></canvas>  
+</div>  
 
+<!-- Live Stats -->
+<div style="text-align: center; margin-top: 20px; color: #fff; font-family: Arial, sans-serif;">  
+  <p><strong>💰 Price:</strong> <span id="price">Loading...</span></p>  
+  <p><strong>🌊 Liquidity:</strong> <span id="liquidity">Loading...</span></p>  
+  <p><strong>📊 Market Cap:</strong> <span id="marketcap">Loading...</span></p>  
+</div>  
+
+<!-- Glow Legend & Title Animation -->
+<style>
+  .legend-glow {
+    transition: text-shadow 0.3s ease, color 0.3s ease;
+  }
+  .legend-glow.active {
+    text-shadow: 0 0 10px #00faff, 0 0 20px #00faff, 0 0 30px #00faff;
+    color: #00faff !important;
+  }
+
+  /* Pulsing Glow for Chart Title */
+  @keyframes pulseGlow {
+    0% {
+      text-shadow: 0 0 5px #00faff, 0 0 10px #00faff;
+      color: #00faff;
+    }
+    50% {
+      text-shadow: 0 0 15px #00faff, 0 0 30px #00faff, 0 0 45px #00faff;
+      color: #66ffff;
+    }
+    100% {
+      text-shadow: 0 0 5px #00faff, 0 0 10px #00faff;
+      color: #00faff;
+    }
+  }
+  .chart-title-glow {
+    animation: pulseGlow 3s infinite ease-in-out;
+  }
+</style>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
+<script>  
+  // 🎨 Token Allocation with shades of blue  
+  const data = {  
+    labels: ["Team", "Sale", "Airdrops", "Foundation", "Validators"],  
+    datasets: [{  
+      data: [15, 15, 5, 5, 60],  
+      backgroundColor: [  
+        "rgba(0, 123, 255, 0.9)",   // Bright blue  
+        "rgba(23, 162, 184, 0.9)",  // Teal blue  
+        "rgba(54, 162, 235, 0.9)",  // Sky blue  
+        "rgba(0, 102, 204, 0.9)",   // Deep blue  
+        "rgba(13, 71, 161, 0.9)"    // Navy blue  
+      ],  
+      borderColor: "#0b0f1a",  
+      borderWidth: 3,  
+      hoverBackgroundColor: [  
+        "rgba(0, 180, 255, 1)",  
+        "rgba(50, 200, 255, 1)",  
+        "rgba(100, 210, 255, 1)",  
+        "rgba(30, 150, 255, 1)",  
+        "rgba(70, 130, 255, 1)"  
+      ],  
+      hoverBorderColor: "#00faff",  
+      hoverBorderWidth: 4,  
+      hoverOffset: 30  
+    }]  
+  };  
+  
+  const config = {  
+    type: "pie",  
+    data: data,  
+    options: {  
+      responsive: true,  
+      animation: {  
+        duration: 600,  
+        easing: "easeOutElastic"  
+      },  
+      hover: {  
+        mode: "nearest",  
+        animationDuration: 400  
+      },  
+      plugins: {  
+        legend: {  
+          position: "bottom",  
+          labels: {  
+            color: "#fff",  
+            font: { size: 14 },  
+            generateLabels(chart) {  
+              const original = Chart.overrides.pie.plugins.legend.labels.generateLabels;  
+              const labels = original(chart);  
+              return labels.map(label => ({  
+                ...label,  
+                text: label.text,  
+                fontColor: "#fff",  
+                datasetIndex: label.datasetIndex  
+              }));  
+            }  
+          },  
+          onHover: (event, legendItem) => {  
+            const legendEl = event.native.target;  
+            legendEl.classList.add("legend-glow", "active");  
+            legendEl.style.cursor = "pointer";  
+          },  
+          onLeave: (event, legendItem) => {  
+            const legendEl = event.native.target;  
+            legendEl.classList.remove("active");  
+          }  
+        },  
+        title: {  
+          display: true,  
+          text: "Richsea Tokenomics",  
+          color: "#00faff",  
+          font: { size: 20, weight: "bold" },  
+          padding: { top: 10, bottom: 20 }  
+        }  
+      }  
+    },  
+    plugins: [  
+      {  
+        id: "glowEffect",  
+        beforeDraw(chart) {  
+          const ctx = chart.ctx;  
+          chart.getDatasetMeta(0).data.forEach((arc, i) => {  
+            if (arc.active) {  
+              ctx.save();  
+              ctx.shadowColor = "rgba(0, 250, 255, 0.8)";  
+              ctx.shadowBlur = 25;  
+              ctx.shadowOffsetX = 0;  
+              ctx.shadowOffsetY = 0;  
+              arc.draw(ctx);  
+              ctx.restore();  
+            }  
+          });  
+        }  
+      },  
+      {  
+        id: "titleGlow",  
+        afterDraw(chart) {  
+          const titleElement = chart.canvas.parentNode.querySelector(".chart-title-glow");  
+          if (!titleElement) {  
+            const div = document.createElement("div");  
+            div.innerText = chart.options.plugins.title.text;  
+            div.className = "chart-title-glow";  
+            div.style.position = "absolute";  
+            div.style.top = "10px";  
+            div.style.left = "50%";  
+            div.style.transform = "translateX(-50%)";  
+            div.style.fontFamily = "Arial, sans-serif";  
+            div.style.fontSize = "20px";  
+            div.style.fontWeight = "bold";  
+            div.style.pointerEvents = "none";  
+            chart.canvas.parentNode.appendChild(div);  
+            chart.options.plugins.title.display = false;  
+            chart.update();  
+          }  
+        }  
+      }  
+    ]  
+  };  
+  
+  // Render Chart  
+  const tokenomicsChart = new Chart(  
+    document.getElementById("tokenomicsChart"),  
+    config  
+  );  
+
+  // 🔢 Number Animation Utility  
+  function animateValue(elementId, start, end, duration) {  
+    const obj = document.getElementById(elementId);  
+    const startTime = performance.now();  
+
+    function update(currentTime) {  
+      const elapsed = currentTime - startTime;  
+      const progress = Math.min(elapsed / duration, 1);  
+      const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic  
+      const currentValue = start + (end - start) * eased;  
+      obj.innerText = `$${currentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;  
+      if (progress < 1) requestAnimationFrame(update);  
+    }  
+    requestAnimationFrame(update);  
+  }  
+
+  // ✅ Fetch live Richsea stats  
+  async function fetchRichseaData() {  
+    try {  
+      const url = "https://api.dexscreener.com/latest/dex/tokens/0xb93d116A1CB1AEE03A64053542Ec966368652873";  
+      const response = await fetch(url);  
+      const psData = await response.json();  
+
+      let marketData = null;  
+      if (psData.pairs && psData.pairs.length > 0) {  
+        marketData = psData.pairs.find(p => p.dexId === "pancakeswap") || psData.pairs[0];  
+      }  
+
+      const priceUsd = marketData ? parseFloat(marketData.priceUsd) : 0;  
+      const liquidityUsd = marketData ? parseFloat(marketData.liquidity.usd) : 0;  
+      const marketCap = marketData ? parseFloat(marketData.fdv) : 0;  
+
+      // Animate numbers from old → new values  
+      animateValue("price", parseFloat(document.getElementById("price").innerText.replace(/[$,]/g, "")) || 0, priceUsd, 1000);  
+      animateValue("liquidity", parseFloat(document.getElementById("liquidity").innerText.replace(/[$,]/g, "")) || 0, liquidityUsd, 1000);  
+      animateValue("marketcap", parseFloat(document.getElementById("marketcap").innerText.replace(/[$,]/g, "")) || 0, marketCap, 1000);  
+
+    } catch (error) {  
+      console.error("Error fetching Richsea data:", error);  
+    }  
+  }  
+
+  fetchRichseaData();  
+  setInterval(fetchRichseaData, 30000);  
+</script>
 
 
 
