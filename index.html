@@ -181,30 +181,7 @@
 
   
 
-  <!-- Section 2: About (SocialFi) -->
-  <section id="about" 
-    <article class="card glass">
-
-    <h2>About Richsea</h2>
-    
-    <div class="feature-media">
-      
-    </div>
-    <br>
-    <div class="feature-copy">
-      <h3>Building wealth through SocialFi</h3>
-      <p>RichSea is a SocialFi project that blends defi and finance so users can interact, build community, and unlock financial opportunities.</p>
-      <ul class="list">
-        <li><strong>Key features:</strong> SocialFi for community & growth; token rewards; opportunities to earn.</li>
-        <li><strong>Benefits:</strong> Wealth creation, social engagement, rewards in TWD & BFT.</li>
-      </ul>
-    </div>
-    </article>
-  </section>
-
-
-
-
+  <!-- Section 2: About (S
 <!-- Chart Container -->
 <div style="max-width: 400px; margin: auto; padding: 20px; background: #0b0f1a; border-radius: 16px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);">
   <canvas id="tokenomicsChart"></canvas>
@@ -304,7 +281,30 @@
   <button class="copy-btn" id="copy-btn" onclick="copyAddress()">
     📋 Copy
   </button>
-</section>
+</section>>cialFi) -->
+  <section id="about" 
+    <article class="card glass">
+
+    <h2>About Richsea</h2>
+    
+    <div class="feature-media">
+      
+    </div>
+    <br>
+    <div class="feature-copy">
+      <h3>Building wealth through SocialFi</h3>
+      <p>RichSea is a SocialFi project that blends defi and finance so users can interact, build community, and unlock financial opportunities.</p>
+      <ul class="list">
+        <li><strong>Key features:</strong> SocialFi for community & growth; token rewards; opportunities to earn.</li>
+        <li><strong>Benefits:</strong> Wealth creation, social engagement, rewards in TWD & BFT.</li>
+      </ul>
+    </div>
+    </article>
+  </section>
+
+
+
+
 
 
 
@@ -491,6 +491,146 @@
 </script>
   
 
+
+
+  <script>
+  // 🎨 Token Allocation (shades of blue)
+  const data = {
+    labels: ["Team", "Sale", "Airdrops", "Foundation", "Validators"],
+    datasets: [{
+      data: [15, 15, 5, 5, 60],
+      backgroundColor: [
+        "rgba(59, 130, 246, 0.9)",
+        "rgba(37, 99, 235, 0.9)",
+        "rgba(29, 78, 216, 0.9)",
+        "rgba(30, 64, 175, 0.9)",
+        "rgba(23, 37, 84, 0.9)"
+      ],
+      borderColor: "#00faff",
+      borderWidth: 2,
+      hoverOffset: 20
+    }]
+  };
+
+  // 🌟 Neon Glow + Pulse Plugin
+  const neonPulse = {
+    id: "neonPulse",
+    beforeDraw(chart) {
+      const ctx = chart.ctx;
+      const time = Date.now() / 500;
+      const pulse = Math.sin(time) * 10 + 20; // 10–30 blur
+      chart.data.datasets.forEach((dataset, i) => {
+        const meta = chart.getDatasetMeta(i);
+        meta.data.forEach((element, index) => {
+          ctx.save();
+          ctx.shadowColor = dataset.backgroundColor[index];
+          ctx.shadowBlur = pulse;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+          element.draw(ctx);
+          ctx.restore();
+        });
+      });
+    }
+  };
+
+  const config = {
+    type: "pie",
+    data: data,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: "Richsea Tokenomics",
+          color: "#00faff",
+          font: { size: 20, weight: "bold" }
+        },
+        outlabels: {
+          text: "%l %p",
+          color: "white",
+          stretch: 25,
+          font: {
+            resizable: true,
+            minSize: 10,
+            maxSize: 14,
+            weight: "bold"
+          }
+        }
+      },
+      animation: { duration: 0 }
+    },
+    plugins: [neonPulse]
+  };
+
+  const tokenomicsChart = new Chart(
+    document.getElementById("tokenomicsChart"),
+    config
+  );
+
+  // ✅ Continuous pulse animation
+  function animatePulse() {
+    tokenomicsChart.update("none");
+    requestAnimationFrame(animatePulse);
+  }
+  animatePulse();
+
+  // 🎯 Count-up function
+  function animateValue(id, start, end, duration) {
+    const obj = document.getElementById(id);
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const value = start + (end - start) * progress;
+      obj.innerText = `$${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    };
+    requestAnimationFrame(step);
+  }
+
+  // ✅ Fetch live Richsea stats from Dexscreener
+  async function fetchRichseaData() {
+    try {
+      const url = "https://api.dexscreener.com/latest/dex/tokens/0xb93d116A1CB1AEE03A64053542Ec966368652873";
+      const response = await fetch(url);
+      const psData = await response.json();
+
+      console.log("Dexscreener data:", psData); // 🐞 debug
+
+      let marketData = null;
+      if (psData.pairs && psData.pairs.length > 0) {
+        marketData = psData.pairs.find(p => p.dexId === "pancakeswap") || psData.pairs[0];
+      }
+
+      const priceUsd = marketData ? parseFloat(marketData.priceUsd) : NaN;
+      const liquidityUsd = marketData ? parseFloat(marketData.liquidity.usd) : NaN;
+      const marketCap = marketData ? parseFloat(marketData.fdv) : NaN;
+
+      if (!isNaN(priceUsd)) animateValue("price", 0, priceUsd, 1200);
+      else document.getElementById("price").innerText = "N/A";
+
+      if (!isNaN(liquidityUsd)) animateValue("liquidity", 0, liquidityUsd, 1200);
+      else document.getElementById("liquidity").innerText = "N/A";
+
+      if (!isNaN(marketCap)) animateValue("marketcap", 0, marketCap, 1200);
+      else document.getElementById("marketcap").innerText = "N/A";
+
+    } catch (error) {
+      console.error("Error fetching Richsea data:", error);
+      document.getElementById("price").innerText = "N/A";
+      document.getElementById("liquidity").innerText = "N/A";
+      document.getElementById("marketcap").innerText = "N/A";
+    }
+  }
+
+  // Run once + refresh every 30s
+  fetchRichseaData();
+  setInterval(fetchRichseaData, 30000);
+      </script>
 
 
   <!-- Section: News Preview -->
