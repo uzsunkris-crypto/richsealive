@@ -310,7 +310,171 @@
 
 
 
+<!-- Chart Container -->
+<div style="max-width: 400px; margin: auto; padding: 20px; background: #0b0f1a; border-radius: 16px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);">
+  <canvas id="tokenomicsChart"></canvas>
+</div>
 
+<!-- Live Stats -->
+<div style="text-align: center; margin-top: 20px; color: #fff; font-family: Arial, sans-serif;">
+  <p><strong>💰 Price:</strong> <span id="price">Loading...</span></p>
+  <p><strong>🌊 Liquidity:</strong> <span id="liquidity">Loading...</span></p>
+  <p><strong>📊 Market Cap:</strong> <span id="marketcap">Loading...</span></p>
+</div>
+
+<!-- View Full Tokenomics Button -->
+<div style="text-align: center; margin-top: 15px;">
+  <a href="/tokenomics.html" class="pulse-button">
+    🔎 View Full Tokenomics
+  </a>
+</div>
+
+<!-- Button + Slice Glow Animation -->
+<style>
+  .pulse-button {
+    background: linear-gradient(90deg, #00faff, #0088ff);
+    padding: 12px 24px;
+    border-radius: 8px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+    transition: 0.3s;
+    display: inline-block;
+    animation: pulseGlow 2s infinite;
+  }
+
+  .pulse-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.9);
+  }
+
+  @keyframes pulseGlow {
+    0% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.6); }
+    50% { box-shadow: 0 0 25px rgba(0, 255, 255, 1); }
+    100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.6); }
+  }
+</style>
+
+<!-- Chart.js + Plugins -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-piechart-outlabels"></script>
+
+<script>
+  // 🎨 Token Allocation (shades of blue)
+  const data = {
+    labels: ["Team", "Sale", "Airdrops", "Foundation", "Validators"],
+    datasets: [{
+      data: [15, 15, 5, 5, 60],
+      backgroundColor: [
+        "rgba(59, 130, 246, 0.9)", // blue-500
+        "rgba(37, 99, 235, 0.9)",  // blue-600
+        "rgba(29, 78, 216, 0.9)",  // blue-700
+        "rgba(30, 64, 175, 0.9)",  // blue-800
+        "rgba(23, 37, 84, 0.9)"    // blue-900
+      ],
+      borderColor: "#00faff",
+      borderWidth: 2,
+      hoverOffset: 20
+    }]
+  };
+
+  // 🌟 Neon Glow + Pulse Plugin
+  const neonPulse = {
+    id: "neonPulse",
+    beforeDraw(chart) {
+      const ctx = chart.ctx;
+      const time = Date.now() / 500; // pulsing speed
+      const pulse = Math.sin(time) * 10 + 20; // shadowBlur oscillates between 10-30
+
+      chart.data.datasets.forEach((dataset, i) => {
+        const meta = chart.getDatasetMeta(i);
+        meta.data.forEach((element, index) => {
+          ctx.save();
+          ctx.shadowColor = dataset.backgroundColor[index];
+          ctx.shadowBlur = pulse;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+          element.draw(ctx);
+          ctx.restore();
+        });
+      });
+    }
+  };
+
+  const config = {
+    type: "pie",
+    data: data,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }, // 🚫 legend hidden
+        title: {
+          display: true,
+          text: "Richsea Tokenomics",
+          color: "#00faff",
+          font: { size: 20, weight: "bold" }
+        },
+        outlabels: {
+          text: "%l %p", // label + percentage
+          color: "white",
+          stretch: 25,
+          font: {
+            resizable: true,
+            minSize: 10,
+            maxSize: 14,
+            weight: "bold"
+          }
+        }
+      },
+      animation: {
+        duration: 0 // disable default animation, so pulse is smooth
+      }
+    },
+    plugins: [neonPulse]
+  };
+
+  // Render Chart
+  const tokenomicsChart = new Chart(
+    document.getElementById("tokenomicsChart"),
+    config
+  );
+
+  // ✅ Animate chart continuously (so pulse works)
+  function animatePulse() {
+    tokenomicsChart.update("none"); // redraw without animation
+    requestAnimationFrame(animatePulse);
+  }
+  animatePulse();
+
+  // ✅ Fetch live Richsea stats
+  async function fetchRichseaData() {
+    try {
+      const url = "https://api.dexscreener.com/latest/dex/tokens/0xb93d116A1CB1AEE03A64053542Ec966368652873";
+      const response = await fetch(url);
+      const psData = await response.json();
+
+      let marketData = null;
+      if (psData.pairs && psData.pairs.length > 0) {
+        marketData = psData.pairs.find(p => p.dexId === "pancakeswap") || psData.pairs[0];
+      }
+
+      const priceUsd = marketData ? marketData.priceUsd : "N/A";
+      const liquidityUsd = marketData ? marketData.liquidity.usd : "N/A";
+      const marketCap = marketData ? marketData.fdv : "N/A";
+
+      document.getElementById("price").innerText = `$${Number(priceUsd).toLocaleString()}`;
+      document.getElementById("liquidity").innerText = `$${Number(liquidityUsd).toLocaleString()}`;
+      document.getElementById("marketcap").innerText = `$${Number(marketCap).toLocaleString()}`;
+
+    } catch (error) {
+      console.error("Error fetching Richsea data:", error);
+    }
+  }
+
+  fetchRichseaData();
+  setInterval(fetchRichseaData, 30000);
+</script>
 
   
 
