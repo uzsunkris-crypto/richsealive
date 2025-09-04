@@ -532,3 +532,37 @@ async function fetchLiveStats() {
 fetchLiveStats();
 setInterval(fetchLiveStats, 60000); // refresh every 60s
 </script>
+
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const track = document.getElementById("videoCarousel");
+  let scrollAmount = 0;
+
+  function autoScroll() {
+    if (!track) return;
+    const card = track.querySelector(".video-card");
+    if (!card) return;
+
+    const cardWidth = card.offsetWidth + 16; // card + gap
+    const maxScroll = track.scrollWidth - track.clientWidth;
+
+    scrollAmount += cardWidth;
+
+    if (scrollAmount > maxScroll) {
+      scrollAmount = 0; // loop back
+    }
+
+    track.scrollTo({
+      left: scrollAmount,
+      behavior: "smooth"
+    });
+  }
+
+  // Autoplay every 5 seconds
+  setInterval(autoScroll, 5000);
+});
+</script>
