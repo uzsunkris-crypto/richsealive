@@ -566,3 +566,155 @@ document.addEventListener("DOMContentLoaded", function () {
   setInterval(autoScroll, 5000);
 });
 </script>
+
+
+
+
+
+
+const track = document.getElementById('carouselTrack');
+const slides = Array.from(track.children);
+const nextButton = document.getElementById('next');
+const prevButton = document.getElementById('prev');
+const dotsContainer = document.getElementById('carouselDots');
+
+let startX = 0;
+let currentTranslate = 0;
+let prevTranslate = 0;
+let isDragging = false;
+let autoPlayInterval;
+let currentIndex = 1; // start at first "real" slide (after clone)
+
+// 🔹 Clone first & last slides for infinite loop
+const firstClone = slides[0].cloneNode(true);
+const lastClone = slides[slides.length - 1].cloneNode(true);
+track.appendChild(firstClone);
+track.insertBefore(lastClone, slides[0]);
+
+// Refresh slides array after cloning
+let allSlides = Array.from(track.children);
+
+function getCardsPerView() {
+  if (window.innerWidth >= 900) return 3;
+  if (window.innerWidth >= 600) return 2;
+  return 1;
+}
+
+function totalPages() {
+  return Math.ceil((allSlides.length - 2) / getCardsPerView()); // exclude clones
+}
+
+// Generate dots dynamically
+function generateDots() {
+  dotsContainer.innerHTML = "";
+  for (let i = 0; i < totalPages(); i++) {
+    const dot = document.createElement("span");
+    dot.classList.add("dot");
+    if (i === 0) dot.classList.add("active");
+    dot.addEventListener("click", () => {
+      currentIndex = i + 1; // account for clone
+      updateSlide(currentIndex);
+    });
+    dotsContainer.appendChild(dot);
+  }
+}
+generateDots();
+let dots = dotsContainer.querySelectorAll(".dot");
+
+function updateSlide(index, transition = true) {
+  const cardsPerView = getCardsPerView();
+  const slideWidth = track.clientWidth / cardsPerView;
+
+  if (transition) {
+    track.style.transition = "transform 0.4s ease-in-out";
+  } else {
+    track.style.transition = "none";
+  }
+
+  currentTranslate = -index * slideWidth;
+  prevTranslate = currentTranslate;
+  track.style.transform = `translateX(${currentTranslate}px)`;
+
+  // Update dots (skip clones)
+  let dotIndex = index - 1;
+  if (index === 0) dotIndex = totalPages() - 1;
+  if (index === allSlides.length - 1) dotIndex = 0;
+
+  dots.forEach((dot, i) => {
+    dot.classList.toggle("active", i === dotIndex);
+  });
+}
+
+// Jump to real slide after clone transition
+track.addEventListener("transitionend", () => {
+  if (allSlides[currentIndex].isEqualNode(firstClone)) {
+    currentIndex = 1;
+    updateSlide(currentIndex, false);
+  }
+  if (allSlides[currentIndex].isEqualNode(lastClone)) {
+    currentIndex = allSlides.length - 2;
+    updateSlide(currentIndex, false);
+  }
+});
+
+function nextSlide() {
+  if (currentIndex >= allSlides.length - 1) return;
+  currentIndex++;
+  updateSlide(currentIndex);
+}
+
+function prevSlide() {
+  if (currentIndex <= 0) return;
+  currentIndex--;
+  updateSlide(currentIndex);
+}
+
+nextButton.addEventListener("click", nextSlide);
+prevButton.addEventListener("click", prevSlide);
+
+// Auto-play
+function startAutoPlay() {
+  autoPlayInterval = setInterval(nextSlide, 4000);
+}
+function stopAutoPlay() {
+  clearInterval(autoPlayInterval);
+}
+startAutoPlay();
+
+// Swipe with live preview
+track.addEventListener("touchstart", (e) => {
+  stopAutoPlay();
+  startX = e.touches[0].clientX;
+  isDragging = true;
+  track.style.transition = "none";
+});
+
+track.addEventListener("touchmove", (e) => {
+  if (!isDragging) return;
+  const currentX = e.touches[0].clientX;
+  const diff = currentX - startX;
+  currentTranslate = prevTranslate + diff;
+  track.style.transform = `translateX(${currentTranslate}px)`;
+});
+
+track.addEventListener("touchend", () => {
+  isDragging = false;
+  const movedBy = currentTranslate - prevTranslate;
+  const threshold = 50;
+
+  if (movedBy < -threshold) currentIndex++;
+  if (movedBy > threshold) currentIndex--;
+
+  updateSlide(currentIndex);
+  startAutoPlay();
+});
+
+// Recalculate on resize
+window.addEventListener("resize", () => {
+  generateDots();
+  dots = dotsContainer.querySelectorAll(".dot");
+  updateSlide(currentIndex, false);
+});
+
+// Initialize position
+updateSlide(currentIndex, false);
