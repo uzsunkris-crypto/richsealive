@@ -851,3 +851,105 @@ canvas:hover {
 
 
 
+
+
+
+
+
+.carousel {
+  width: 100%;
+  max-width: 900px; /* expand on desktop */
+  overflow: hidden;
+  position: relative;
+  border-radius: 15px;
+  margin: auto;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.4s ease-in-out;
+}
+
+.card {
+  flex: 0 0 100%; /* Default: 1 card per view */
+  background: linear-gradient(to bottom, #0d3b66, #003366);
+  border-radius: 15px;
+  padding: 20px;
+  box-sizing: border-box;
+  text-align: left;
+  color: white;
+}
+
+.card h3 {
+  margin: 0 0 10px;
+}
+
+.card p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #cfd9e0;
+}
+
+.card button {
+  margin-top: 10px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 10px;
+  background: #0074D9;
+  color: white;
+  cursor: pointer;
+}
+
+.buttons {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.buttons button {
+  background: rgba(0,0,0,0.4);
+  border: none;
+  color: white;
+  font-size: 18px;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 50%;
+  pointer-events: auto;
+}
+
+.dots {
+  text-align: center;
+  margin-top: 12px;
+}
+
+.dot {
+  height: 10px;
+  width: 10px;
+  margin: 0 5px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dot.active {
+  background-color: #0074D9;
+}
+
+/* 🔹 Responsive adjustments */
+@media (min-width: 600px) {
+  .card {
+    flex: 0 0 50%; /* 2 cards per view on tablets */
+  }
+}
+
+@media (min-width: 900px) {
+  .card {
+    flex: 0 0 33.33%; /* 3 cards per view on desktop */
+  }
+}
