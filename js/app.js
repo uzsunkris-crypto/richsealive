@@ -569,6 +569,138 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+(function initNewsCarousel(rootId = "newsCarousel") {
+  const root = document.getElementById(rootId);
+  if (!root) return;
+
+  const viewport = root.querySelector(".nc-viewport");
+  const track = root.querySelector(".nc-track");
+  const cards = Array.from(track.querySelectorAll(".nc-card"));
+  const prevBtn = root.querySelector(".nc-prev");
+  const nextBtn = root.querySelector(".nc-next");
+  const dotsWrap = root.querySelector("#ncDots");
+
+  // helpers
+  const getCardsPerView = () => {
+    if (window.innerWidth >= 900) return 3;
+    if (window.innerWidth >= 600) return 2;
+    return 1;
+  };
+
+  let pageOffsets = [];  // left positions for each page start
+  let currentPage = 0;
+  let autoplayTimer = null;
+
+  function computePageOffsets() {
+    const cpv = getCardsPerView();
+    pageOffsets = [];
+    const totalPages = Math.ceil(cards.length / cpv);
+    for (let i = 0; i < totalPages; i++) {
+      const firstCardIndex = i * cpv;
+      const el = cards[firstCardIndex];
+      pageOffsets.push(el ? el.offsetLeft - track.offsetLeft : 0);
+    }
+    // Correct current page after layout change
+    currentPage = clampPage(currentPage);
+  }
+
+  function clampPage(i) {
+    const last = Math.max(0, pageOffsets.length - 1);
+    if (i < 0) return 0;
+    if (i > last) return last;
+    return i;
+  }
+
+  function scrollToPage(i) {
+    currentPage = clampPage(i);
+    viewport.scrollTo({ left: pageOffsets[currentPage], behavior: "smooth" });
+    updateDots();
+  }
+
+  function nearestPage() {
+    const x = viewport.scrollLeft;
+    let best = 0;
+    let bestDist = Infinity;
+    pageOffsets.forEach((off, idx) => {
+      const d = Math.abs(x - off);
+      if (d < bestDist) { best = idx; bestDist = d; }
+    });
+    return best;
+  }
+
+  // dots
+  function renderDots() {
+    dotsWrap.innerHTML = "";
+    pageOffsets.forEach((_, idx) => {
+      const dot = document.createElement("span");
+      dot.className = "nc-dot" + (idx === currentPage ? " active" : "");
+      dot.addEventListener("click", () => scrollToPage(idx));
+      dotsWrap.appendChild(dot);
+    });
+  }
+  function updateDots() {
+    const dots = dotsWrap.querySelectorAll(".nc-dot");
+    dots.forEach((d, i) => d.classList.toggle("active", i === currentPage));
+  }
+
+  // arrows
+  prevBtn.addEventListener("click", () => {
+    stopAutoplay();
+    scrollToPage(currentPage - 1);
+    startAutoplay();
+  });
+  nextBtn.addEventListener("click", () => {
+    stopAutoplay();
+    scrollToPage(currentPage + 1 >= pageOffsets.length ? 0 : currentPage + 1);
+    startAutoplay();
+  });
+
+  // autoplay
+  function startAutoplay() {
+    if (autoplayTimer) return;
+    autoplayTimer = setInterval(() => {
+      scrollToPage(currentPage + 1 >= pageOffsets.length ? 0 : currentPage + 1);
+    }, 4000);
+  }
+  function stopAutoplay() {
+    clearInterval(autoplayTimer);
+    autoplayTimer = null;
+  }
+
+  // pause on hover / touch
+  root.addEventListener("mouseenter", stopAutoplay);
+  root.addEventListener("mouseleave", startAutoplay);
+  viewport.addEventListener("touchstart", stopAutoplay, { passive: true });
+  viewport.addEventListener("touchend", startAutoplay);
+
+  // update current page after scrolling ends (debounced)
+  let scrollDebounce;
+  viewport.addEventListener("scroll", () => {
+    window.clearTimeout(scrollDebounce);
+    scrollDebounce = window.setTimeout(() => {
+      currentPage = nearestPage();
+      updateDots();
+    }, 120);
+  });
+
+  // recompute on resize / font load
+  const recompute = () => {
+    computePageOffsets();
+    renderDots();
+    scrollToPage(currentPage); // maintain position
+  };
+  window.addEventListener("resize", () => {
+    // wait a tick for layout to settle
+    requestAnimationFrame(recompute);
+  });
+  // initial
+  requestAnimationFrame(() => {
+    computePageOffsets();
+    renderDots();
+    scrollToPage(0);
+    startAutoplay();
+  });
+})();
 
 
 
