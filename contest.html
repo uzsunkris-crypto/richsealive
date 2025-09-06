@@ -204,281 +204,489 @@
 
 
 
-  
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RichSea Chatbot</title>
-  <style>
-    /* Floating bot icon */
-    #botIcon {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #007bff;
-      color: white;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 28px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      transition: transform 0.2s;
-      z-index: 1000;
-    }
-    #botIcon:hover { transform: scale(1.1); }
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Richsea Assistant Widget</title>
+<style>
+  :root{
+    --accent:#0b74ff;
+    --glass-bg: rgba(255,255,255,0.08);
+    --glass-border: rgba(255,255,255,0.12);
+  }
+  /* Floating toggle */
+  .chat-toggle {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 26px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer; z-index: 999999;
+    box-shadow: 0 10px 30px rgba(11,116,255,0.2);
+    transition: transform .18s;
+    border: none;
+  }
+  .chat-toggle:hover{ transform: scale(1.06); }
 
-    /* Chat container */
-    #chatContainer {
-      position: fixed;
-      bottom: 90px;
-      right: 20px;
-      width: 360px;
-      height: 520px;
-      max-width: 90vw;
-      max-height: 80vh;
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      font-family: "Segoe UI", sans-serif;
-      animation: fadeIn 0.3s ease-in-out;
-      z-index: 1000;
-    }
-    .hidden { display: none; }
+  /* Chat window */
+  .chat-window {
+    position: fixed;
+    right: 20px;
+    bottom: 100px;
+    width: 380px;
+    max-width: calc(100% - 40px);
+    height: 560px;
+    border-radius: 14px;
+    overflow: hidden;
+    z-index: 999999;
+    display:flex;flex-direction:column;
+    box-shadow: 0 18px 45px rgba(2,6,23,0.35);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
 
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(20px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
+  /* Themes (background + header) */
+  .theme-morning { background: linear-gradient(135deg,#f7fbff,#ffffff); color:#0b2b3a; }
+  .theme-afternoon { background: linear-gradient(135deg,#fff7ee,#fff1df); color:#402800; }
+  .theme-evening { background: linear-gradient(135deg,#0f1220,#0b1220); color:#eaeef8; }
 
-    /* Header */
-    #chatHeader {
-      background: #007bff;
-      color: white;
-      padding: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: bold;
-    }
-    #chatHeader button {
-      background: transparent;
-      border: none;
-      color: white;
-      font-size: 18px;
-      cursor: pointer;
-    }
+  .chat-header{
+    display:flex;align-items:center;justify-content:space-between;padding:12px 14px;
+    font-weight:700; font-size:16px;
+  }
+  .chat-header .title { display:flex; align-items:center; gap:8px; }
+  .chat-header .title .emoji { font-size:20px; }
 
-    /* Messages */
-    #chatMessages {
-      flex: 1;
-      padding: 12px;
-      overflow-y: auto;
-      background: #f9f9f9;
-    }
-    .message {
-      margin: 6px 0;
-      padding: 10px 14px;
-      border-radius: 16px;
-      max-width: 80%;
-      word-wrap: break-word;
-    }
-    .user {
-      background: #007bff;
-      color: white;
-      margin-left: auto;
-      border-bottom-right-radius: 4px;
-    }
-    .bot {
-      background: #e5e5e5;
-      color: black;
-      margin-right: auto;
-      border-bottom-left-radius: 4px;
-    }
+  .chat-body {
+    flex:1; padding:14px; overflow:auto; display:flex;flex-direction:column; gap:8px;
+    backdrop-filter: blur(6px);
+  }
 
-    /* Controls */
-    #chatControls {
-      display: flex;
-      align-items: center;
-      padding: 6px;
-      background: #f1f1f1;
-    }
-    #voiceSelect { flex: 1; padding: 4px; font-size: 12px; }
-    #muteBtn { margin-left: 5px; cursor: pointer; }
+  /* glass message bubble base */
+  .msg {
+    max-width: 78%;
+    padding:10px 14px;
+    border-radius: 14px;
+    word-wrap: break-word;
+    font-size:14px;
+    line-height:1.35;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 6px 18px rgba(2,6,23,0.12);
+  }
 
-    /* Input area */
-    #chatInputArea {
-      display: flex;
-      border-top: 1px solid #ddd;
-    }
-    #userInput {
-      flex: 1;
-      border: none;
-      padding: 12px;
-      font-size: 14px;
-    }
-    #sendBtn {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 12px;
-      font-size: 16px;
-      cursor: pointer;
-    }
+  /* bot (left) */
+  .bot {
+    align-self:flex-start;
+    text-align:left;
+    border-radius: 14px 14px 14px 4px;
+  }
 
-    /* Mobile responsiveness */
-    @media (max-width: 500px) {
-      #chatContainer {
-        right: 10px;
-        bottom: 80px;
-        width: 95vw;
-        height: 75vh;
-      }
-    }
-  </style>
+  /* user (right) */
+  .user {
+    align-self:flex-end;
+    text-align:right;
+    border-radius: 14px 14px 4px 14px;
+  }
+
+  /* theme-specific bubble tints */
+  .theme-morning .bot { background: rgba(230,247,255,0.7); color:#004466; border-color: rgba(0,116,255,0.18); }
+  .theme-morning .user { background: rgba(11,116,255,0.9); color:#fff; }
+
+  .theme-afternoon .bot { background: rgba(255,229,179,0.85); color:#4a2c00; border-color: rgba(255,140,26,0.18); }
+  .theme-afternoon .user { background: rgba(255,140,26,0.95); color:#fff; }
+
+  .theme-evening .bot { background: rgba(44,44,84,0.9); color:#f0f0f0; border-color: rgba(106,90,205,0.18); }
+  .theme-evening .user { background: rgba(106,90,205,0.9); color:#fff; }
+
+  /* Collapsible controls inside messages */
+  .collapsible {
+    display:block;
+    padding:8px 10px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+    margin-top:8px;
+    width:100%;
+    text-align:left;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.03);
+  }
+  .content { display:none; margin-top:8px; padding:10px; border-radius:10px; background: rgba(0,0,0,0.02); }
+
+  /* Chat footer / input */
+  .chat-footer { display:flex; gap:8px; padding:10px; align-items:center; border-top:1px solid rgba(0,0,0,0.06); }
+  .chat-footer input {
+    flex:1;padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,0.08); outline:none; font-size:14px;
+    background: transparent;
+  }
+  .send-btn { padding:10px 12px;border-radius:10px;border:none;cursor:pointer; font-weight:600; color:#fff; background:var(--accent); }
+  .clear-btn { padding:8px 10px;border-radius:10px;border:none;cursor:pointer;background:#ff5a5a;color:#fff; font-size:13px; }
+
+  /* action buttons inside messages */
+  .chat-btn {
+    display:inline-block;margin:6px 6px 6px 0;padding:8px 12px;border-radius:10px;text-decoration:none;
+    font-size:13px;color:#fff;background:var(--accent);
+  }
+  .chat-btn:hover { opacity:0.95; transform:translateY(-2px); }
+
+  /* quick-action strip */
+  .quick-actions { display:flex; gap:8px; padding:10px; justify-content:center; flex-wrap:wrap; border-top:1px solid rgba(0,0,0,0.04); }
+  .quick-actions button { padding:8px 12px;border-radius:10px;border:none;background:rgba(0,0,0,0.06); cursor:pointer; }
+
+  /* small screens */
+  @media(max-width:420px){ .chat-window{ right:12px; left:12px; width:auto; bottom:80px; } .chat-body{padding:10px;} }
+</style>
 </head>
 <body>
 
-  <!-- Floating bot icon -->
-  <div id="botIcon">🤖</div>
+<!-- Floating button -->
+<button id="chatToggle" class="chat-toggle" title="Open Richsea chat"><span id="botIcon">💬</span></button>
 
-  <!-- Chatbot container -->
-  <div id="chatContainer" class="hidden">
-    <div id="chatHeader">
-      <span>RichSea Bot</span>
-      <button id="closeBot">✖</button>
-    </div>
-
-    <div id="chatMessages"></div>
-
-    <div id="chatControls">
-      <select id="voiceSelect"></select>
-      <button id="muteBtn">🔊</button>
-    </div>
-
-    <div id="chatInputArea">
-      <input type="text" id="userInput" placeholder="Ask about RichSea...">
-      <button id="sendBtn">➤</button>
+<!-- Chat window -->
+<div id="chatWindow" class="chat-window theme-morning" style="display:none;" role="dialog" aria-label="Richsea chat">
+  <div class="chat-header">
+    <div class="title"><span id="chatHeaderEmoji" class="emoji">☀️</span> <span id="chatHeaderTitle">Richsea Bot</span></div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button id="clearChatBtn" class="clear-btn" style="display:none;">🗑️ Clear</button>
+      <button id="closeChat" class="clear-btn" style="background:#6c757d;">✕</button>
     </div>
   </div>
 
-  <script>
-    // Elements
-    const botIcon = document.getElementById("botIcon");
-    const chatContainer = document.getElementById("chatContainer");
-    const closeBot = document.getElementById("closeBot");
-    const sendBtn = document.getElementById("sendBtn");
-    const userInput = document.getElementById("userInput");
-    const chatMessages = document.getElementById("chatMessages");
-    const voiceSelect = document.getElementById("voiceSelect");
-    const muteBtn = document.getElementById("muteBtn");
+  <div id="chatBody" class="chat-body" aria-live="polite">
+    <!-- messages appended here -->
+  </div>
 
-    let isMuted = false;
+  <div class="quick-actions" id="quickActions">
+    <button data-query="price">💰 Price</button>
+    <button data-query="buy">🛒 Buy</button>
+    <button data-query="stake">⛓️ Stake</button>
+    <button data-query="tokenomics">📊 Tokenomics</button>
+    <button data-query="chart">📈 Chart</button>
+    <button data-query="news">📰 News</button>
+    <button data-query="future">🔮 Future</button>
+  </div>
 
-    // Toggle chatbot
-    botIcon.addEventListener("click", () => chatContainer.classList.toggle("hidden"));
-    closeBot.addEventListener("click", () => chatContainer.classList.add("hidden"));
+  <div class="chat-footer">
+    <input id="chatInput" placeholder="Ask about Richsea (price, buy, stake, chart)..." autocomplete="off"/>
+    <button id="sendBtn" class="send-btn">Send</button>
+  </div>
+</div>
 
-    // Mute
-    muteBtn.addEventListener("click", () => {
-      isMuted = !isMuted;
-      muteBtn.textContent = isMuted ? "🔇" : "🔊";
+<script>
+/* ---------------- CONFIG ---------------- */
+const CONTRACT = "0xb93d116A1CB1AEE03A64053542Ec966368652873".toLowerCase();
+const BSCSCAN_API_KEY = ""; // <-- paste your BscScan API key here (recommended, free). Leave empty -> some tokenomics may return N/A.
+/* ---------------------------------------- */
+
+/* DOM refs */
+const chatToggle = document.getElementById("chatToggle");
+const chatWindow = document.getElementById("chatWindow");
+const chatBody = document.getElementById("chatBody");
+const chatInput = document.getElementById("chatInput");
+const sendBtn = document.getElementById("sendBtn");
+const closeChat = document.getElementById("closeChat");
+const clearChatBtn = document.getElementById("clearChatBtn");
+const botIcon = document.getElementById("botIcon");
+const chatHeaderEmoji = document.getElementById("chatHeaderEmoji");
+const chatHeaderTitle = document.getElementById("chatHeaderTitle");
+const quickActions = document.getElementById("quickActions");
+
+/* Local storage history */
+let history = JSON.parse(localStorage.getItem("richseaHistory") || "[]");
+
+/* Utilities */
+function saveHistory(){ localStorage.setItem("richseaHistory", JSON.stringify(history)); }
+function formatNumber(x){ if (x === null || x === undefined) return "N/A"; try { return Number(x).toLocaleString(); } catch(e){ return x; } }
+function safeText(s){ const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+/* Theme & icon by local time */
+function applyTheme(){
+  const hour = new Date().getHours();
+  chatWindow.classList.remove("theme-morning","theme-afternoon","theme-evening");
+  if (hour < 12){
+    botIcon.textContent = "☀️"; chatHeaderEmoji.textContent = "☀️"; chatHeaderTitle.textContent = "☀️ Richsea Bot";
+    chatWindow.classList.add("theme-morning");
+  } else if (hour < 18){
+    botIcon.textContent = "🌇"; chatHeaderEmoji.textContent = "🌇"; chatHeaderTitle.textContent = "🌇 Richsea Bot";
+    chatWindow.classList.add("theme-afternoon");
+  } else {
+    botIcon.textContent = "🌙"; chatHeaderEmoji.textContent = "🌙"; chatHeaderTitle.textContent = "🌙 Richsea Bot";
+    chatWindow.classList.add("theme-evening");
+  }
+}
+window.addEventListener("load", ()=>{ applyTheme(); setInterval(applyTheme,60000); restoreHistory(); });
+
+/* UI message appender (bot messages allow HTML for links/buttons) */
+function appendMsg(content, sender="bot", store=true){
+  const el = document.createElement("div");
+  el.className = `msg ${sender}`;
+  if (sender === "bot"){
+    el.innerHTML = content;
+  } else {
+    el.textContent = content;
+  }
+  chatBody.appendChild(el);
+  chatBody.scrollTop = chatBody.scrollHeight;
+  if (store) {
+    history.push({ user: sender === "user" ? content.toString().toLowerCase() : null, bot: sender === "bot" ? content : null });
+    // compress history: keep last 200 entries
+    if (history.length > 400) history = history.slice(-400);
+    saveHistory();
+  }
+}
+
+/* Restore conversation from localStorage */
+function restoreHistory(){
+  if (!history || history.length === 0) {
+    // greet user
+    greetUser();
+    return;
+  }
+  chatBody.innerHTML = "";
+  for (const entry of history){
+    if (entry.user) appendMsg(entry.user, "user", false);
+    if (entry.bot) appendMsg(entry.bot, "bot", false);
+  }
+}
+
+/* Clear chat */
+clearChatBtn.addEventListener("click", ()=> {
+  if (!confirm("Clear chat history?")) return;
+  history = []; localStorage.removeItem("richseaHistory");
+  chatBody.innerHTML = ""; greetUser();
+});
+
+/* Toggle chat open/close (clear button visible only when open) */
+chatToggle.addEventListener("click", ()=> {
+  const visible = chatWindow.style.display === "block";
+  chatWindow.style.display = visible ? "none" : "block";
+  clearChatBtn.style.display = visible ? "none" : "inline-block";
+  if (!visible && history.length === 0) greetUser();
+});
+closeChat.addEventListener("click", ()=> { chatWindow.style.display = "none"; clearChatBtn.style.display = "none"; });
+
+/* quick actions */
+quickActions.addEventListener("click", (ev) => {
+  const q = ev.target.dataset?.query;
+  if (q) handleQuery(q);
+});
+
+/* greeting (time-aware) */
+function greetUser(){
+  const hour = new Date().getHours();
+  let greeting = "Hello";
+  if (hour < 12) greeting = "🌞 Good morning";
+  else if (hour < 18) greeting = "🌤️ Good afternoon";
+  else greeting = "🌙 Good evening";
+  appendMsg(`${greeting}! 👋 I’m your Richsea Bot 🤖<br>Ask me about <b>price</b>, <b>how to buy</b>, <b>staking</b>, <b>tokenomics</b>, <b>chart</b>, or <b>news</b>.`);
+}
+
+/* ------------------ LIVE DATA FETCHERS ------------------ */
+
+/* PancakeSwap GraphQL: live token data (priceUsd = derivedUSD) */
+async function fetchPancakeToken(){
+  const query = `{
+    token(address: "${CONTRACT}") {
+      id
+      symbol
+      name
+      derivedUSD
+      totalLiquidity
+      tradeVolumeUSD
+    }
+  }`;
+  try {
+    const res = await fetch("https://proxy-worker-api.pancakeswap.com/bsc-exchange", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ query })
     });
+    const j = await res.json();
+    return j?.data?.token || null;
+  } catch(e){
+    return null;
+  }
+}
 
-    // Voices
-    function populateVoices() {
-      const voices = speechSynthesis.getVoices();
-      voiceSelect.innerHTML = "";
-      voices.forEach((voice, index) => {
-        const option = document.createElement("option");
-        option.value = index;
-        
-        voiceSelect.appendChild(option);
-      });
+/* BscScan: token supply (module=stats action=tokensupply) */
+async function fetchSupplyFromBscScan(){
+  if (!BSCSCAN_API_KEY) return null;
+  try {
+    const url = `https://api.bscscan.com/api?module=stats&action=tokensupply&contractaddress=${CONTRACT}&apikey=${BSCSCAN_API_KEY}`;
+    const r = await fetch(url);
+    const j = await r.json();
+    // returns raw integer string. We can't be 100% sure of decimals; we'll attempt divide by 10**18 if it's large.
+    let raw = j?.result;
+    if (!raw) return null;
+    // heuristics: if length > 18 assume 18 decimals
+    if (raw.length > 18) {
+      const num = Number(raw) / 1e18;
+      return Number.isFinite(num) ? num : null;
+    } else {
+      return Number(raw);
     }
-    speechSynthesis.onvoiceschanged = populateVoices;
+  } catch(e){ return null; }
+}
 
-    // Speak
-    function speakText(text) {
-      if (isMuted) return;
-      const voices = speechSynthesis.getVoices();
-      const utterance = new SpeechSynthesisUtterance(text);
-      const selectedIndex = voiceSelect.value;
-      if (voices[selectedIndex]) utterance.voice = voices[selectedIndex];
-      speechSynthesis.speak(utterance);
+/* BscScan: holders count — BscScan API doesn't expose holderCount directly in some accounts.
+   Try tokenholderlist with offset=1 and parse total - fallback to null.
+*/
+async function fetchHoldersFromBscScan(){
+  if (!BSCSCAN_API_KEY) return null;
+  try {
+    // This endpoint may not return a count; attempt and fallback gracefully.
+    const url = `https://api.bscscan.com/api?module=token&action=getTokenInfo&contractaddress=${CONTRACT}&apikey=${BSCSCAN_API_KEY}`;
+    const r = await fetch(url);
+    const j = await r.json();
+    if (j && j.status == "1" && j.result && typeof j.result.holders === "number") return j.result.holders;
+    // fallback: try tokenholderlist (may not include count)
+    return null;
+  } catch(e){ return null; }
+}
+
+/* ------------------ BOT INTENTS / RESPONSES ------------------ */
+
+async function handleQuery(rawQuery){
+  const q = rawQuery.trim();
+  if (!q) return;
+  appendMsg(q, "user");
+
+  // run responder
+  appendMsg("⏳ Fetching Richsea info...", "bot");
+  const reply = await searchRichsea(q);
+  // remove last "fetching" placeholder (simple approach: remove last bot msg if it contains 'Fetching')
+  const botMsgs = Array.from(chatBody.querySelectorAll(".msg.bot"));
+  const lastBot = botMsgs[botMsgs.length -1];
+  if (lastBot && /Fetching|Searching/.test(lastBot.textContent)) lastBot.remove();
+
+  appendMsg(reply, "bot");
+}
+
+/* Collapsible toggles inside chat (delegated) */
+document.addEventListener("click", (ev) => {
+  if (ev.target.classList.contains("collapsible")){
+    const content = ev.target.nextElementSibling;
+    if (!content) return;
+    const open = content.style.display === "block";
+    content.style.display = open ? "none" : "block";
+    ev.target.innerHTML = open ? "📖 Show Full Guide ⬇️" : "📕 Hide Guide ⬆️";
+  }
+});
+
+/* Main intent router */
+async function searchRichsea(query){
+  const low = query.toLowerCase();
+
+  // PRICE / CHART
+  if (/\b(price|value|worth)\b/.test(low) || low.includes("chart") || low.includes("graph")){
+    const token = await fetchPancakeToken();
+    if (!token) return `<b>💥 Live price unavailable</b><br>Could not fetch PancakeSwap data right now. Try again later.`;
+    const price = Number(token.derivedUSD || 0);
+    const liquidity = token.totalLiquidity || "N/A";
+    return `<h4>💰 Richsea Live Price</h4>
+      <p><b>${token.name || "Richsea"} (${token.symbol || "RICHSEA"})</b><br>
+      Price: <b>$${price.toFixed(8)}</b><br>
+      Liquidity (est): <b>$${formatNumber(liquidity)}</b></p>
+      <div>
+        <a class="chat-btn" href="https://pancakeswap.finance/swap?outputCurrency=${token.id}" target="_blank">🛒 Buy on PancakeSwap</a>
+        <a class="chat-btn" href="https://bscscan.com/token/${token.id}" target="_blank">🔎 View on BscScan</a>
+      </div>
+      <h4>📊 Live Chart</h4>
+      <iframe style="width:100%;height:260px;border-radius:8px;border:0;margin-top:8px;" src="https://dexscreener.com/bsc/${token.id}?embed=1&theme=light"></iframe>`;
+  }
+
+  // HOW TO BUY (collapsible)
+  if (/\b(buy|purchase|get richsea|get token)\b/.test(low)){
+    return `🛒 <b>How to Buy RICHSEA</b><br><br>
+      Buying RICHSEA is simple. Start by expanding the full guide if you need step-by-step instructions.<br><br>
+      <div class="collapsible">📖 Show Full Buying Guide ⬇️</div>
+      <div class="content">
+        <b>Contract:</b> <code>${CONTRACT}</code><br><br>
+        <b>Steps</b><br>
+        1️⃣ Install a BSC wallet (MetaMask, Trust Wallet).<br>
+        2️⃣ Buy BNB and send to your BSC wallet.<br>
+        3️⃣ Open PancakeSwap and paste the contract (or click the Buy button).<br>
+        4️⃣ Set slippage (start at 1–3%). Do a small test swap first.<br>
+        5️⃣ Swap BNB → RICHSEA and add the token to your wallet.<br><br>
+        <b>Quick actions</b><br>
+        <a class="chat-btn" href="https://pancakeswap.finance/swap?outputCurrency=${CONTRACT}" target="_blank">🛒 Swap on PancakeSwap</a>
+        <a class="chat-btn" href="https://bscscan.com/token/${CONTRACT}" target="_blank">🔎 View on BscScan</a><br><br>
+        <i>⚠️ Not financial advice. Start small & verify the contract.</i>
+      </div>`;
+  }
+
+  // STAKING (collapsible accordion)
+  if (/\b(stake|staking|staked)\b/.test(low)){
+    return `🌊 <b>How to Stake Richsea ($RICHSEA)</b><br>
+      Lock tokens to earn rewards and support the ecosystem. Expand for the full step-by-step.<br><br>
+      <div class="collapsible">📖 Show Full Staking Guide ⬇️</div>
+      <div class="content">
+        <b>What you need</b><br>
+        • Web3 wallet (MetaMask / Trust Wallet / Coinbase Wallet)<br>
+        • $RICHSEA tokens + BNB for gas<br>
+        • Official staking app: <a class="chat-btn" href="https://richsea.online" target="_blank">🌐 richsea.online</a><br><br>
+
+        <b>Step-by-step</b><br>
+        1️⃣ Open the official Web App & go to Staking.<br>
+        2️⃣ Connect your wallet and choose a staking pool (Flexible / Locked).<br>
+        3️⃣ Approve $RICHSEA (one-time permission) & confirm in wallet.<br>
+        4️⃣ Stake (deposit) tokens and confirm.<br>
+        5️⃣ Claim rewards via Claim/Harvest. Unstake after lock ends if locked.<br><br>
+
+        <b>Security tips</b><br>
+        • Only use <a class="chat-btn" href="https://richsea.online" target="_blank">richsea.online</a>.<br>
+        • Never share seed phrase/private key.<br>
+        • Verify contract addresses on official channels.<br><br>
+
+        <a class="chat-btn" href="https://richsea.online" target="_blank">🌐 Stake Now</a>
+        <a class="chat-btn" href="https://bscscan.com/token/${CONTRACT}" target="_blank">🔎 View on BscScan</a>
+      </div>`;
+  }
+
+  // TOKENOMICS (live where possible)
+  if (/\b(tokenomics|supply|holders|market cap|circulating)\b/.test(low)){
+    try {
+      const token = await fetchPancakeToken();
+      const supply = await fetchSupplyFromBscScan(); // may be null if no API key
+      const holders = await fetchHoldersFromBscScan();
+      let marketCap = null;
+      if (supply && token && token.derivedUSD) marketCap = Number(supply) * Number(token.derivedUSD);
+      return `<h4>📊 Tokenomics (live)</h4>
+        • Contract: <code>${CONTRACT}</code><br>
+        • Total Supply: <b>${supply ? formatNumber(supply) + " RICHSEA" : "N/A"}</b><br>
+        • Holders: <b>${holders ? formatNumber(holders) : "N/A"}</b><br>
+        • Price: <b>$${token && token.derivedUSD ? Number(token.derivedUSD).toFixed(8) : "N/A"}</b><br>
+        • Liquidity (est): <b>$${token && token.totalLiquidity ? formatNumber(token.totalLiquidity) : "N/A"}</b><br>
+        • Market Cap (est): <b>${marketCap ? "$" + formatNumber(marketCap.toFixed(0)) : "N/A"}</b><br><br>
+        <a class="chat-btn" href="https://bscscan.com/token/${CONTRACT}" target="_blank">🔎 View on BscScan</a>`;
+    } catch(e){
+      return "⚠️ Unable to fetch tokenomics at the moment. Try again shortly.";
     }
+  }
 
-    // RichSea knowledge base (50+ Q&A grouped)
-    const richseaKnowledge = [
-      { q:["what is richsea","about richsea"], a:["🌊 RichSea is a blockchain-powered ecosystem full of opportunities.","RichSea is about community, innovation, and crypto growth."] },
-      { q:["how to join","join richsea","get started"], a:["✨ Connect your wallet to join RichSea.","🚀 Getting started is easy — connect your wallet and dive in!"] },
-      { q:["richsea token","token info"], a:["💎 The RichSea token powers governance, rewards, and transactions.","It is the heart of the ecosystem, fueling DeFi opportunities."] },
-      { q:["founder","who created richsea"], a:["RichSea was built by visionary blockchain developers and community.","It was founded by a passionate team driving crypto innovation."] },
-      { q:["wallet","connect wallet"], a:["Click the connect button to link your wallet and start.","🔐 Securely connect your wallet to unlock RichSea features."] },
-      { q:["staking","earn rewards"], a:["You can stake RichSea tokens to earn passive rewards.","💰 Staking increases your holdings over time."] },
-      { q:["nft","richsea nft"], a:["RichSea NFTs represent unique assets in the ecosystem.","🎨 Our NFTs unlock exclusive community benefits."] },
-      { q:["roadmap","future plans"], a:["RichSea roadmap includes DeFi, NFTs, DAO governance, and more.","📅 Upcoming milestones will expand community features."] },
-      { q:["partnerships","collaboration"], a:["RichSea partners with innovative blockchain projects.","🤝 Partnerships expand opportunities for holders."] },
-      { q:["community","telegram","discord"], a:["Join our Telegram & Discord to engage with the RichSea community.","👥 Community is at the heart of RichSea’s growth."] },
-      { q:["price","token price"], a:["Please check CoinGecko or CoinMarketCap for live RichSea price.","📊 Price updates are available on exchanges."] },
-      { q:["airdrop","free tokens"], a:["RichSea may run airdrops — follow our announcements.","🎁 Stay active in the community to be eligible."] },
-      { q:["exchange","where to buy"], a:["RichSea token is listed on several DEX and CEX platforms.","💱 You can buy on PancakeSwap and other exchanges."] },
-      { q:["security","is it safe"], a:["RichSea smart contracts are audited for safety.","🔒 Security and transparency are our top priorities."] },
-      { q:["governance","dao"], a:["Holders can participate in RichSea DAO decisions.","📢 Governance lets the community vote on key proposals."] },
-      { q:["use cases","utility"], a:["RichSea token is used for staking, governance, payments, and NFTs.","🌍 Utility grows as the ecosystem expands."] },
-      { q:["vision","mission"], a:["RichSea’s mission is to build an ocean of opportunity in crypto.","🌊 Our vision is mass adoption of blockchain solutions."] },
-      { q:["how to earn","make money"], a:["You can earn through staking, trading, NFTs, and governance.","💸 Active users benefit the most."] },
-      { q:["launch date","when started"], a:["RichSea launched in 2023 with global community support.","🚀 The project continues to expand in 2025."] },
-      { q:["developers","team"], a:["RichSea has a diverse global team of blockchain experts.","👨‍💻 Developers and community drive growth together."] },
-      // (20 entries × 2+ answers = 50+ responses)
-    ];
+  // CHART (embed)
+  if (/\b(chart|price chart|chart)\b/.test(low)){
+    return `<h4>📈 Live Richsea Chart</h4>
+      <iframe style="width:100%;height:360px;border:0;border-radius:8px;" src="https://dexscreener.com/bsc/${CONTRACT}?embed=1&theme=light"></iframe>
+      <div style="margin-top:8px;">
+        <a class="chat-btn" href="https://dexscreener.com/bsc/${CONTRACT}" target="_blank">Open full chart</a>
+      </div>`;
+  }
 
-    // Find answer
-    function getRichSeaAnswer(input) {
-      input = input.toLowerCase();
-      for (let item of richseaKnowledge) {
-        if (item.q.some(q => input.includes(q))) {
-          return item.a[Math.floor(Math.random() * item.a.length)];
-        }
-      }
-      return "🤖 I’m your RichSea assistant! Please ask me something related to RichSea 🌊";
-    }
+  // NEWS (static links / manual)
+  if (/\b(news|announcement|announcements|update)\b/.test(low)){
+    return `<h4>📰 Richsea News & Trackers</h4>
+      • Official site: <a class="chat-btn" href="https://richsea.online" target="_blank">richsea.online</a><br>
+      • Trackers: <a class="chat-btn" href="https://poocoin.app/tokens/${CONTRACT}" target="_blank">Poocoin</a>
+      <a class="chat-btn" href="https://dexscreener.com/bsc/${CONTRACT}" target="_blank">DexScreener</a><br><br>
+      Tip: Follow official social channels for real-time announcements.`;
+  }
 
-    // Add message
-    function addMessage(text, sender) {
-      const msg = document.createElement("div");
-      msg.classList.add("message", sender);
-      msg.textContent = text;
-      chatMessages.appendChild(msg);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    // Send
-    function sendMessage() {
-      const text = userInput.value.trim();
-      if (!text) return;
-      addMessage(text, "user");
-      userInput.value = "";
-
-      setTimeout(() => {
-        const reply = getRichSeaAnswer(text);
-        addMessage(reply, "bot");
-        speakText(reply);
-      }, 600);
-    }
-    sendBtn.addEventListener("click", sendMessage);
-    userInput.addEventListener("keypress", e => { if (e.key === "Enter") sendMessage(); });
-  </script>
-</body>
-</html>
-</body>
-</html>
+  // FUTURE / PREDICTIONS (collapsible)
+  if (/\b(future|5 year
