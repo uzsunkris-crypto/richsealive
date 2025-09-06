@@ -952,3 +952,78 @@ canvas:hover {
 
 
 
+
+
+
+
+.images-rail {
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+.section-title {
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+.images-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.images-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 15px;
+  padding: 10px 0;
+  scrollbar-width: none; /* Firefox */
+}
+
+.images-track::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.image-card {
+  flex: 0 0 auto;
+  width: 250px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  text-align: center;
+  background-color: #fff;
+}
+
+.image-card img {
+  width: 100%;
+  display: block;
+}
+
+.scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.scroll-btn.left {
+  left: 0;
+}
+
+.scroll-btn.right {
+  right: 0;
+}
+
+.scroll-btn:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+
