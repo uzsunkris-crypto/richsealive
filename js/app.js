@@ -704,4 +704,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+
+
+
+const track = document.getElementById('imageCarousel');
+const leftBtn = document.querySelector('.scroll-btn.left');
+const rightBtn = document.querySelector('.scroll-btn.right');
+
+const scrollAmount = 300; // pixels to scroll per click
+
+leftBtn.addEventListener('click', () => {
+  track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+});
+
+rightBtn.addEventListener('click', () => {
+  track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+});
+         
+
   
